@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.EquipmentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Equipment">
+		<id column="equipmentId" property="equipmentId" />
+		<result column="equipmentName" property="equipmentName" />
+		<result column="loginstate" property="loginstate" />
+		<result column="token" property="token" />
+		<result column="departmentId" property="departmentId" />
+		<result column="region" property="region" />
+		<result column="equipmentCode" property="equipmentCode" />
+	</resultMap>
+
+<!-- 	<select id="getCurOrganName" parameterType="Integer" resultType="string"
+		statementType="CALLABLE">
+		{call getCurOrganName(#{token,mode=IN})}
+	</select> -->
+
+	<select id="getCurOrganName" parameterMap="getOrganInfoMap" statementType="CALLABLE" resultType="string">
+		CALL getCurOrganName(?)
+	</select>
+
+	<parameterMap type="java.util.Map" id="getOrganInfoMap">
+		<parameter property="token" mode="IN" jdbcType="VARCHAR" />
+	</parameterMap>
+</mapper>

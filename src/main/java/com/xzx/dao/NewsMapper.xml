@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.NewsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.News">
+        <id column="NewsId" property="NewsId" />
+        <result column="NewsTitle" property="NewsTitle" />
+        <result column="NewsTypeId" property="NewsTypeId" />
+        <result column="NewsCover" property="NewsCover" />
+        <result column="AreaId" property="AreaId" />
+        <result column="DisplayTime" property="DisplayTime" />
+        <result column="NewsBrief" property="NewsBrief" />
+        <result column="NewsContext" property="NewsContext" />
+        <result column="IsRecommend" property="IsRecommend" />
+        <result column="IsAvailable" property="IsAvailable" />
+    </resultMap>
+
+	<select id="getPCNewsByParam" resultMap="BaseResultMap">
+		SELECT a.NewsId,a.NewsTitle,a.NewsTypeId,ifnull(a.NewsCover,'') as NewsCover,a.AreaId,a.DisplayTime,a.NewsBrief,a.NewsContext,a.IsRecommend,a.IsAvailable FROM news a left join newstype b
+		on a.NewsTypeId=b.NewsTypeId
+		where b.NewsWorkModel=#{NewsWorkModel} and b.state=0 and a.IsAvailable=0
+		<if test="title!= null and title!= ''">
+			and a.NewsTitle like concat('%',#{title},'%')
+		</if>
+		<if test="recommendType!=-1">
+			and a.IsRecommend=#{recommendType}
+		</if>
+		<if test="newsType!=-3">
+			and a.NewsTypeId=#{newsType}
+		</if>
+		order by DisplayTime desc
+	</select>
+
+	<select id="getLawExamListByParam" resultMap="BaseResultMap">
+		SELECT a.* FROM news a left 
+		join equipment b
+		on a.AreaId=b.region
+		left join newstype c
+		on a.NewsTypeId=c.NewsTypeId
+		where b.token=#{token}  
+		and IsAvailable=0
+		<if test="recommendType!=-1">
+			and a.IsRecommend=#{recommendType}
+		</if>
+		and c.NewsWorkModel=3 
+		and c.state=0
+	</select>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.Fy_spMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Fy_sp">
+        <id column="fy_spId" property="fy_spId" />
+        <result column="fy_ajId" property="fy_ajId" />
+        <result column="js_tjjacgfkh" property="js_tjjacgfkh" />
+        <result column="js_rmtjxys" property="js_rmtjxys" />
+        <result column="js_tjbl" property="js_tjbl" />
+        <result column="js_sdsx" property="js_sdsx" />
+        <result column="zh_tjbl" property="zh_tjbl" />
+        <result column="zh_tjjabcgfkh" property="zh_tjjabcgfkh" />
+        <result column="ssyd_tjbl" property="ssyd_tjbl" />
+        <result column="ssyd_tjjabcgfkh" property="ssyd_tjjabcgfkh" />
+    </resultMap>
+    
+	<update id="updateSP" parameterType="com.xzx.model.Fy_sp">
+		UPDATE fy_sp
+		<trim prefix="set" suffixOverrides=",">
+			<if test="js_tjjacgfkh!=null and js_tjjacgfkh!=''">js_tjjacgfkh=#{js_tjjacgfkh},</if>
+			<if test="js_rmtjxys!=null and js_rmtjxys!=''">js_rmtjxys=#{js_rmtjxys},</if>
+			<if test="js_tjbl!=null and js_tjbl!=''">js_tjbl=#{js_tjbl},</if>
+			<if test="js_sdsx!=null and js_sdsx!=''">js_sdsx=#{js_sdsx},</if>
+			<if test="zh_tjbl!=null and zh_tjbl!=''">zh_tjbl=#{zh_tjbl},</if>
+			<if test="zh_tjjabcgfkh!=null and zh_tjjabcgfkh!=''">zh_tjjabcgfkh=#{zh_tjjabcgfkh},</if>
+			<if test="ssyd_tjbl!=null and ssyd_tjbl!=''">ssyd_tjbl=#{ssyd_tjbl},</if>
+			<if test="ssyd_tjjabcgfkh!=null and ssyd_tjjabcgfkh!=''">ssyd_tjjabcgfkh=#{ssyd_tjjabcgfkh},</if>
+		</trim>
+		WHERE fy_ajId=#{fy_ajId}
+	</update>
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.FairworkerMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Fairworker">
+		<id column="FairWorkerId" property="FairWorkerId" />
+		<result column="WorkerName" property="WorkerName" />
+		<result column="PinYin" property="PinYin" />
+		<result column="Phone" property="Phone" />
+		<result column="Image" property="Image" />
+		<result column="Sex" property="Sex" />
+		<result column="PoliticalOutlook" property="PoliticalOutlook" />
+		<result column="Speciality" property="Speciality" />
+		<result column="SFZH" property="SFZH" />
+		<result column="MZ" property="MZ" />
+		<result column="Education" property="Education" />
+		<result column="Academic" property="Academic" />
+		<result column="DepartmentId" property="DepartmentId" />
+		<result column="Professional" property="Professional" />
+		<result column="Certificate" property="Certificate" />
+		<result column="Post" property="Post" />
+		<result column="CertificateTime" property="CertificateTime" />
+		<result column="LoginUserName" property="LoginUserName" />
+		<result column="QualificationNumber" property="QualificationNumber" />
+		<result column="Telephone" property="Telephone" />
+		<result column="Email" property="Email" />
+		<result column="IsNationals" property="IsNationals" />
+		<result column="IsNationalsTime" property="IsNationalsTime" />
+		<result column="RegionId" property="RegionId" />
+		<result column="WorkerType" property="WorkerType" />
+	</resultMap>
+
+	<select id="getNames" resultType="java.lang.String">
+		select Group_concat(WorkerName) from fairworker where FairWorkerID in (${workerids})
+	</select>
+
+	<select id="getFairWorkerByDepartId" resultType="com.xzx.viewModel.FairWorkerInfos">
+		select * from (
+		select (select DepartmentName from department where DepartmentId=f.DepartmentId) as DepartmentName,
+		Sex,Education,profession,r.RegionName RegionName,
+		f.FairWorkerId,f.WorkerName, ifnull(f.Telephone,'') as Telephone, ifnull(f.Image,'') as Image, ifnull(f.Speciality,'') as Speciality,
+		(select ifnull(round((count(1)*5-sum(evaluateType))/count(1),1),0) from speed where FairWorkerId=f.FairWorkerId and evaluateState=1) as evaluateScore
+		from fairworker f
+		left join region r on f.RegionId=r.RegionId
+		where f.State=0 and WorkerType!=7
+		<if test='type=="0"'>
+			and f.DepartmentId=#{paramId}
+		</if>
+		<if test='type=="1"'>
+			and f.DepartmentId=(select departmentId from equipment where
+			token=#{paramId} limit 1)
+		</if>
+		<if test="searchText!= null and searchText!= ''">
+			and WorkerName like concat('%',#{searchText},'%')
+		</if>
+		) temp
+		order by evaluateScore desc
+	</select>
+
+	<select id="getWorkerList" resultType="com.xzx.model.Fairworker">
+		select * from (select FairWorkerId,WorkerName,Speciality,Image,(select
+		ifnull(round((count(1)*5-sum(evaluateType))/count(1),1),0) from speed
+		where FairWorkerId=a.FairWorkerId and evaluateState=1) as
+		MZ,a.Telephone,(select DepartmentName from department where
+		DepartmentId=a.DepartmentId) as DepartmentName,profession,Sex
+		from fairworker a
+		where State=0 and WorkerType!=7
+		<if test='RegionId!="-1"'>
+			and RegionId=#{RegionId}
+		</if>
+		<if test='DepartmentId!="-1"'>
+			and DepartmentId=#{DepartmentId}
+		</if>
+		<if test='WorkerType!="-1"'>
+			and WorkerType=#{WorkerType}
+		</if>
+		) temp order by MZ desc
+	</select>
+
+	<select id="getConsultworker" resultType="com.xzx.model.Fairworker">
+		select b.* from consultworker a
+		left join fairworker b
+		on a.FairWorkerId=b.FairWorkerId
+		where 1=1
+		<if test="RegionId!=-1">
+			and a.ConsultRegionId=#{RegionId}
+		</if>
+		<if test="TypeId!=-1">
+			and a.ConsultTypeId=#{TypeId}
+		</if>
+		order by b.Createdate desc
+	</select>
+
+	<select id="getSecondAssignWorkerList" resultType="com.xzx.model.Fairworker">
+		select * from (select FairWorkerId,WorkerName,Speciality,Image,(select
+		ifnull(round((count(1)*5-sum(evaluateType))/count(1),1),0) from speed
+		where FairWorkerId=a.FairWorkerId and evaluateState=1) as
+		MZ,a.Telephone,(select DepartmentName from department where
+		DepartmentId=a.DepartmentId) as DepartmentName
+		from fairworker a
+		where State=0 and WorkerType!=7 and FairWorkerId !=#{FirstFairworkerId}
+		<if test='RegionId!="-1"'>
+			and RegionId=#{RegionId}
+		</if>
+		<if test='DepartmentId!="-1"'>
+			and DepartmentId=#{DepartmentId}
+		</if>
+		<if test='WorkerType!="-1"'>
+			and WorkerType=#{WorkerType}
+		</if>
+		) temp order by MZ desc
+	</select>
+</mapper>

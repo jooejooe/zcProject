@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.Access_bczjMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Access_bczj">
+        <id column="access_bczj_Id" property="access_bczj_Id" />
+        <result column="Type" property="Type" />
+        <result column="ajId" property="ajId" />
+        <result column="accessname" property="accessname" />
+        <result column="accesscontext" property="accesscontext" />
+    </resultMap>
+
+	<insert id="insertBatchAccessZJ" parameterType="java.util.List" useGeneratedKeys="false">
+		insert into access_bczj (Type,ajId,accessname,accesscontext) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{ModelType},
+			#{ModelId},
+			#{item.accessname},
+			#{item.accesscontext}
+			)
+		</foreach>
+	</insert>
+</mapper>

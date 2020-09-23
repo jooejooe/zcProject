@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.AuthworkerinfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Authworkerinfo">
+        <id column="id" property="id" />
+        <result column="workerids" property="workerids" />
+        <result column="authId" property="authId" />
+    </resultMap>
+
+    <insert id="insertAuthWorkerInfo" parameterType="com.xzx.model.Authworkerinfo">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into authworkerinfo(workerids)
+        values (#{workerids})
+    </insert>
+
+</mapper>

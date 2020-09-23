@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.Aj_tjblMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Aj_tjbl">
+        <id column="anjian_tjbl_Id" property="anjian_tjbl_Id" />
+        <result column="anjianId" property="anjianId" />
+        <result column="userId" property="userId" />
+        <result column="tjblinfo" property="tjblinfo" />
+        <result column="createdate" property="createdate" />
+        <result column="fairworkerId" property="fairworkerId" />
+    </resultMap>
+
+</mapper>

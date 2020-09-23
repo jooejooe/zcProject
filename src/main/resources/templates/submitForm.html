@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+</head>
+<body>
+	<p th:text="${msg}"></p>
+	<form action="/equipment/photoSubmit" method="post">
+		<input type="text" name="SFZH" placeholder="身份证号"> <input
+			type="text" name=imgBase64 placeholder="图片"> <input
+			type="submit" value="登录">
+	</form>
+	<script>
+		$(function() {
+			alert(1)
+		});
+	</script>
+</body>
+</html>

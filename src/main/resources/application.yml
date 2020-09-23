@@ -1,0 +1,105 @@
+myhttp:
+  port : 5662
+#注册调用C#人脸注册接口
+custom:
+    faceUrl: http://192.168.0.147:8081/Regster.ashx
+    meetingUrl: http://222.170.62.186:8081/fmapi/webservice/jaxws?wsdl
+    ryUrl: http://www.demoserver.cn:3000/ryRegister
+    ryImageUrl: https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2732017967,3740059157&fm=26&gp=0.jpg
+    ryGetUserOnlineStateUrl:  http://www.demoserver.cn:3000/OnlineStatus/
+    accessTokenUrl:  https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+    jsapiTicketUrl:  https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi
+    getCodeUrl:  https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=redirectUri&response_type=code&scope=SCOPE&state=123&connect_redirect=1#wechat_redirect
+    getTokenUrl:   https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+    appid:  wxb1b29ece73083c97
+    appsecret:  d469738f0b20a6714895e751105318d4
+    tokenExpiretime:  60000
+    tokenRefreshInterval:  600
+    redisExpiredTime: 60
+file:
+    uploadFolder: C://Users/Administrator/Desktop/LawCaseBackApi/uploadFiles/
+    staticAccessPath: /uploadFiles/**
+    #zzl增加 20200518
+    #数据库名称
+    DataBaseName: zc
+    #后台项目上传文件存放路径，条件：本项目与后台项目部署在同一台机器上
+    JudicialBackFileUpload: c:/tomcat5664/webapps/judicial/FileUpload/
+logging:
+    level:
+        root: warn
+    path: ./logs
+    pattern:
+        console: '%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n '
+        file: '%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n'
+messageSend:
+    AppId: 1400150280
+    AppKey: 86036c462d947de69ae37c784667651c
+    Sign: 牡丹江市司法局
+mybatis:
+    config-location: classpath:configuration.xml
+    mapper-locations: classpath*:com/xzx/dao/*Mapper.xml
+    type-aliases-package: com.xzx.model
+regionTopCode: 6
+swagger: 
+    enabled: true
+server:
+    max-http-header-size: 5MB
+    port: 5663
+    tomcat:
+        max-http-post-size: 5MB
+        uri-encoding: UTF-8
+    ssl:
+      key-store: classpath:ssl.jks
+#      key-store: classpath:www.demoserver.cn.jks
+      enabled: true
+      key-store-password: i1234567
+#      key-store-password: a61207p602
+      key-store-type: JKS
+    ciphers:
+      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256
+spring: 
+    aop: 
+        auto: true
+    datasource:
+        driverClassName: com.mysql.cj.jdbc.Driver
+        druid:
+            connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+            filters: stat
+            initialSize: 5
+            maxActive: 20
+            maxPoolPreparedStatementPerConnectionSize: 20
+            maxWait: 60000
+            minIdle: 5
+            poolPreparedStatements: true
+            testOnBorrow: false
+            testOnReturn: false
+            testWhileIdle: true
+            timeBetweenEvictionRunsMillis: 60000
+            validationQuery: SELECT 1
+        password: 123456
+        type: com.alibaba.druid.pool.DruidDataSource
+#        url: jdbc:mysql://47.92.2.211:3306/zc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+        url: jdbc:mysql://192.168.0.180:3306/zc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+        username: root
+    http:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+    resources:
+        chain:
+            strategy:
+                content:
+                    enabled: true
+                    paths: /**
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 100MB
+            max-request-size: 1GB
+    thymeleaf:
+        cache: false
+        encoding: UTF-8
+        mode: HTML
+        prefix: classpath:/templates/
+        suffix: .html

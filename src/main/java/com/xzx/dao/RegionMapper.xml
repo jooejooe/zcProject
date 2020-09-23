@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.RegionMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Region">
+		<id column="RegionId" property="RegionId" />
+		<result column="RegionName" property="RegionName" />
+		<result column="RegionCode" property="RegionCode" />
+		<result column="ParentId" property="ParentId" />
+	</resultMap>
+
+	<!-- 获取相应父级id对应的区域列表 -->
+	<select id="getRegionList" parameterType="int" resultMap="BaseResultMap">
+		select * from region
+		<if test="ParentId!=-1">
+			where ParentId=#{ParentId}
+		</if>
+	</select>
+
+	<select id="getTopRegionName" resultType="com.xzx.model.Region">
+		select * from region 
+		where RegionId=(SELECT ParentId FROM region where RegionId=
+		<if test='type == "0"'>
+		(select Region from equipment where token=#{token} limit 1)
+		</if>
+		<if test='type == "1"'>
+		#{token}
+		</if>
+		limit 1)
+	</select>
+</mapper>

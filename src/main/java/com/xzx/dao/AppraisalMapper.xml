@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.AppraisalMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Appraisal">
+		<id column="AppraisalId" property="AppraisalId" />
+		<result column="MatterType" property="MatterType" />
+		<result column="NextMatterType" property="NextMatterType" />
+		<result column="MatterDepart" property="MatterDepart" />
+		<result column="UserId" property="UserId" />
+		<result column="OtherPartyId" property="OtherPartyId" />
+		<result column="Summary" property="Summary" />
+		<result column="Context" property="Context" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="RegionId" property="RegionId" />
+	</resultMap>
+
+	<select id="getItemInfoById" resultType="com.xzx.viewModel.ItemDetailInfo">
+		select a.AppraisalId as BusinessId,b.RealName,DATE_FORMAT(a.CreateDate,'%Y-%m-%d %H:%i:%s') as
+		CreateDate,ifnull(c.DepartmentName,'') as DepartmentName,
+		ifnull(d.OtherpartyName,'') as OtherpartyName,ifnull(d.SFZH,'') as SFZH,
+		ifnull(d.RelationsPhone,'') as RelationsPhone,ifnull(d.OtherDepartNAME,'') as OtherDepartNAME,
+		ifnull(d.OtherDepartPhone,'') as OtherDepartPhone,ifnull(d.OtherDepartAddress,'') as OtherDepartAddress,
+		ifnull(a.NextMatterType,'') as NextMatterType,b.SFZH as ApplySFZH,b.Telephone as
+		ApplyPhone,ifnull(e.title,'') as BusinessType,ifnull(f.WorkerName,'') as WorkerName,
+		ifnull(f.Telephone,'') as WorkerTelephone,
+		ifnull(f.Image,'') as fairworkerImg,ifnull(c.DepartmentPhone,'') as DepartmentPhone,
+		ifnull((select 
+			(case when evaluateType=0 then '非常满意'
+			when evaluateType=1 then '满意'
+			when evaluateType=2 then '一般'
+			when evaluateType=3 then '不满意' 
+			else ' ' end) as evaluateStr
+			from speed a where ModelType=2 and ModelId=#{appraisalId} and registerId=a.UserId and evaluateState=1
+		),'') as evaluateTypeStr
+		from appraisal a left join register b
+		on a.UserId=b.UserId
+		left join department c
+		on a.MatterDepart=c.DepartmentId
+		left join
+		otherparty d
+		on a.OtherpartyId=d.OtherpartyId
+		left join assistance e
+		on
+		a.MatterType=e.assistanceId
+		left join fairworker f
+		on
+		a.FairworkerId=f.FairWorkerId
+		where AppraisalId=#{appraisalId} and
+		e.State=0 and assistancetype=2
+		<!-- and a.UserId=#{userId} -->
+	</select>
+</mapper>

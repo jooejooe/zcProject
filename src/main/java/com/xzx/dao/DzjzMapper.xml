@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.DzjzMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Dzjz">
+        <id column="jzId" property="jzId" />
+        <result column="type" property="type" />
+        <result column="ajId" property="ajId" />
+        <result column="jzbh" property="jzbh" />
+        <result column="cjr" property="cjr" />
+        <result column="cjsj" property="cjsj" />
+    </resultMap>
+
+</mapper>

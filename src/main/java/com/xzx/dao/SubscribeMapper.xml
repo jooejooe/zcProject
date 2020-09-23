@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SubscribeMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Subscribe">
+		<id column="subscribeId" property="subscribeId" />
+		<result column="RegionId" property="RegionId" />
+		<result column="DepartMentId" property="DepartMentId" />
+		<result column="fairworkerId" property="fairworkerId" />
+		<result column="subscribeType" property="subscribeType" />
+		<result column="UserId" property="UserId" />
+		<result column="subscribe" property="subscribe" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="ModelType" property="ModelType" />
+		<result column="Context" property="Context" />
+	</resultMap>
+
+	<select id="getItemInfoById" resultType="com.xzx.viewModel.ItemDetailInfo">
+		select ifnull(b.DepartmentName,'') as DepartmentName,c.RealName,c.SFZH as ApplySFZH,c.Telephone as
+		ApplyPhone,ifnull(d.WorkerName,'') as WorkerName,
+		DATE_FORMAT(a.subscribe,'%Y-%m-%d %H:%i:%s') as CreateDate,
+		ifnull(a.Context,'') as Context,ifnull(e.subscribeType,'') as BusinessType,
+		ifnull(d.Image,'') as fairworkerImg,
+		ifnull(d.Telephone,'') as WorkerTelephone,
+		ifnull(b.DepartmentPhone,'') as DepartmentPhone
+		from subscribe a left join
+		department b
+		on
+		a.DepartMentId=b.DepartmentId
+		left join register c
+		on
+		a.UserId=c.UserId
+		left join fairworker d
+		on
+		a.FairworkerId=d.FairworkerId
+		left join
+		subscribetype e
+		on
+		a.subscribeType=e.id
+		where subscribeId=#{subscribeId}
+		<!-- and a.UserId=#{userId} -->
+	</select>
+
+	<insert id="addSubscribe" parameterType="com.xzx.model.Subscribe" useGeneratedKeys="true" keyProperty="subscribeId">
+		insert into subscribe(RegionId, DepartMentId,
+		fairworkerId,subscribeType,UserId,subscribe,CreateDate,
+		ModelType,Context
+		<if test="applyType!=null and applyType!=''">,applyType</if>
+		<if test="authenticateType!=null and authenticateType!=''">,authenticateType</if>
+		)
+		values
+		(#{RegionId}, #{DepartMentId}, #{fairworkerId},
+		#{subscribeType},#{UserId},#{subscribe},now(),#{ModelType},#{Context}
+		<if test="applyType!=null and applyType!=''">,#{applyType}</if>
+		<if test="authenticateType!=null and authenticateType!=''">,#{authenticateType}</if>
+		)
+	</insert>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.Tjy_accessMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Tjy_access">
+		<id column="tjy_accessId" property="tjy_accessId" />
+		<result column="anjianId" property="anjianId" />
+		<result column="accessurl" property="accessurl" />
+		<result column="fairworkerId" property="fairworkerId" />
+		<result column="createdate" property="createdate" />
+		<result column="userId" property="userId" />
+		<result column="usertype" property="usertype" />
+		<result column="accessname" property="accessname" />
+		<result column="accessid" property="accessid" />
+	</resultMap>
+
+	<insert id="insertBatchTJYAccess" parameterType="java.util.List"
+		useGeneratedKeys="false">
+		insert into tjy_access
+		(anjianId,accessurl,fairworkerId,createdate,userId,usertype,accessname,accessid)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.anjianId},
+			#{item.accessurl},
+			#{item.fairworkerId},
+			now(),
+			#{item.userId},
+			#{item.usertype},
+			#{item.accessname},
+			#{item.accessid}
+			)
+		</foreach>
+	</insert>
+	
+	<insert id="addWaitTJYAccess" parameterType="String">
+		insert into tjy_access (anjianId,accessurl,fairworkerId,createdate,userId,usertype,accessname)
+		select anjianId,accessurl,#{workId},now(),userId,usertype,accessname 
+		from access_wait where access_waitId=#{accessWaitId}
+	</insert>
+</mapper>

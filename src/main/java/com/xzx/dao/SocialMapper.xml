@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SocialMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Social">
+		<id column="SocialUserId" property="SocialUserId" />
+		<result column="SocialUserName" property="SocialUserName" />
+		<result column="SocialIdCard" property="SocialIdCard" />
+		<result column="SocialPhone" property="SocialPhone" />
+		<result column="SocialImage" property="SocialImage" />
+		<result column="SocialIdCardImage" property="SocialIdCardImage" />
+		<result column="SuperviseType" property="SuperviseType" />
+		<result column="StatisticsDays" property="StatisticsDays" />
+		<result column="JudgementStartTime" property="JudgementStartTime" />
+		<result column="JudgementEndTime" property="JudgementEndTime" />
+		<result column="IsPunch" property="IsPunch" />
+		<result column="HouseholdAddress" property="HouseholdAddress" />
+		<result column="Address" property="Address" />
+		<result column="FamilyName" property="FamilyName" />
+		<result column="FamilyPhone" property="FamilyPhone" />
+		<result column="GuaranteeName" property="GuaranteeName" />
+		<result column="GuaranteePhone" property="GuaranteePhone" />
+		<result column="FriendName" property="FriendName" />
+		<result column="FriendPhone" property="FriendPhone" />
+		<result column="UserId" property="UserId" />
+		<result column="State" property="State" />
+	</resultMap>
+
+	<select id="getAllSocialFinger" resultType="com.xzx.viewModel.FingersInfo">
+		select SocialIdCard as SFZH,HandImage as fingers from social
+		where
+		State=0 and IsPunch=0 and HandImage is not null
+		<if test="SFZH!=null and SFZH!=''">
+			and SocialIdCard=#{SFZH}
+		</if>
+	</select>
+
+	<update id="updateSocialFinger" parameterType="com.xzx.model.Social">
+		UPDATE social
+		set HandImage=#{HandImage}
+		where SocialIdCard=#{SocialIdCard}
+	</update>
+	
+	<update id="updateSocialFingerById">
+		update social
+		set HandImage=(select fingerPrint from fingerprintinfos where id=#{photoId} limit 1)
+		where SocialIdCard=#{SocialIdCard}
+	</update>
+</mapper>

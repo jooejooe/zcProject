@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD//EN Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.RegisterMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Register">
+		<id column="UserId" property="UserId" />
+		<result column="RealName" property="RealName" />
+		<result column="SFZH" property="SFZH" />
+		<result column="Telephone" property="Telephone" />
+		<result column="Sex" property="Sex" />
+		<result column="Email" property="Email" />
+		<result column="QQ" property="QQ" />
+		<result column="Address" property="Address" />
+		<result column="City" property="City" />
+		<result column="PostalCode" property="PostalCode" />
+		<result column="Birthday" property="Birthday" />
+		<result column="Education" property="Education" />
+		<result column="WorkUnit" property="WorkUnit" />
+		<result column="RegisterIP" property="RegisterIP" />
+		<result column="ReGisterDate" property="ReGisterDate" />
+		<result column="LastLoginTime" property="LastLoginTime" />
+		<result column="LoginState" property="LoginState" />
+		<result column="Occupation" property="Occupation" />
+		<result column="isdb" property="isdb" />
+		<result column="zcdwid" property="zcdwid" />
+	</resultMap>
+
+	<!-- 修改注册信息 -->
+	<update id="updateRegisterUser" parameterType="com.xzx.model.Register">
+		UPDATE register
+		<trim prefix="set" suffixOverrides=",">
+			<if test="RealName!=null and RealName!=''">RealName=#{RealName},</if>
+			<if test="Telephone!=null and Telephone!=''">Telephone=#{Telephone},</if>
+			<if test="Sex!=null and Sex!=''">Sex=#{Sex},</if>
+			<if test="Email!=null and Email!=''">Email=#{Email},</if>
+			<if test="QQ!=null and QQ!=''">QQ=#{QQ},</if>
+			<if test="Address!=null and Address!=''">Address=#{Address},</if>
+			<if test="City!=null and City!=''">City=#{City},</if>
+			<if test="PostalCode!=null and PostalCode!=''">PostalCode=#{PostalCode},</if>
+			<if test="Birthday!=null and Birthday!=''">Birthday=#{Birthday},</if>
+			<if test="Education!=null and Education!=''">Education=#{Education},</if>
+			<if test="WorkUnit!=null and WorkUnit!=''">WorkUnit=#{WorkUnit},</if>
+			<if test="RegisterIP!=null and RegisterIP!=''">RegisterIP=#{RegisterIP},</if>
+			<if test="LastLoginTime!=null and LastLoginTime!=''">LastLoginTime=#{LastLoginTime},</if>
+			<if test="LoginState!=null and LoginState!=''">LoginState=#{LoginState},</if>
+			<if test="Occupation!=null and Occupation!=''">Occupation=#{Occupation},</if>
+			<if test="MZ!=null and MZ!=''">MZ=#{MZ},</if>
+			<if test="CardType!=null and CardType!=''">CardType=#{CardType},</if>
+			<if test="SZD!=null and SZD!=''">SZD=#{SZD},</if>
+			<if test="NowSZD!=null and NowSZD!=''">NowSZD=#{NowSZD},</if>
+			<if test="Image!=null and Image!=''">Image=#{Image},</if>
+			<if test="fingers!=null and fingers!=''">fingers=#{fingers},</if>
+		</trim>
+		WHERE UserId=#{UserId}
+	</update>
+
+	<select id="getAllFingerprint" resultType="com.xzx.viewModel.FingersInfo">
+		select SFZH,fingers
+		from register where LoginState=0 and fingers is not null
+	</select>
+
+	<update id="updateRegisterFinger" parameterType="com.xzx.model.Register">
+		UPDATE register
+		set fingers=#{fingers}
+		where SFZH=#{SFZH}
+	</update>
+
+	<update id="updateRegisterFingerById">
+		update register
+		set fingers=(select fingerPrint from fingerprintinfos where id=#{photoId} limit 1)
+		where UserId=#{registerId}
+	</update>
+</mapper>

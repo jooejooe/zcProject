@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SendMessageLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.SendMessageLog">
+		<id column="id" property="id" />
+		<result column="templateId" property="templateId" />
+		<result column="state" property="state" />
+		<result column="telephone" property="telephone" />
+		<result column="params" property="params" />
+		<result column="regionId" property="regionId" />
+		<result column="errorMsg" property="errorMsg" />
+		<result column="sendTime" property="sendTime" />
+	</resultMap>
+
+	<insert id="insertBatchSendMsgLog" parameterType="java.util.List" useGeneratedKeys="false">
+		insert into sendmessagelog(templateId, state, telephone,params,regionId,errorMsg,sendTime,messageType) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.templateId}, #{item.state},#{item.telephone}, #{item.params}, #{item.regionId}, #{item.errorMsg},now(),#{item.messageType})
+		</foreach>
+	</insert>
+</mapper>

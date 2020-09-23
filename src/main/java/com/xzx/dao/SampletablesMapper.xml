@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD//EN Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SampletablesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Sampletables">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="examplePath" property="examplePath" />
+        <result column="templatePath" property="templatePath" />
+        <result column="departmentId" property="departmentId" />
+        <result column="regionId" property="regionId" />
+        <result column="isDel" property="isDel" />
+        <result column="state" property="state" />
+        <result column="createUser" property="createUser" />
+        <result column="createTime" property="createTime" />
+        <result column="modelType" property="modelType" />
+    </resultMap>
+
+	<select id="getSampleTablesList" resultType="com.xzx.model.Sampletables">
+		select * from sampletables
+		where isDel=0 and state=0 
+		<if test="modelType!=-1"> 
+			and modelType=#{modelType}
+		</if>
+		<if test="title != null and title != '' ">
+			and title like CONCAT('%',#{title},'%')
+		</if>
+		<if test="token != null and token !=''">
+			and regionId=(SELECT IFNULL(region,-1) as region FROM equipment where token =#{token})
+		</if>
+		order by createTime desc
+	</select>
+</mapper>

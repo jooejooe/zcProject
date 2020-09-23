@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SpeedMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Speed">
+		<id column="SpeedId" property="SpeedId" />
+		<result column="ModelType" property="ModelType" />
+		<result column="ModelId" property="ModelId" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="State" property="State" />
+		<result column="refuseReason" property="refuseReason" />
+		<result column="addReason" property="addReason" />
+		<result column="evaluateType" property="evaluateType" />
+		<result column="evaluateContext" property="evaluateContext" />
+		<result column="fairworkerId" property="fairworkerId" />
+		<result column="registerId" property="registerId" />
+		<result column="sqfinfoId" property="sqfinfoId" />
+		<result column="bsqfinfoId" property="bsqfinfoId" />
+	</resultMap>
+
+	<select id="getSpeedList" resultType="hashmap">
+		select a.SpeedId,
+		(case when
+		a.ModelType=0 then '公证办理申办'
+		when a.ModelType=1 then '人民调解申办'
+		when
+		a.ModelType=2 then '司法鉴定申办'
+		when a.ModelType=3 then '法律援助申办'
+		when
+		a.ModelType=4 then '公证办理预约'
+		when a.ModelType=5 then '人民调解预约'
+		when
+		a.ModelType=6 then '司法鉴定预约'
+		when a.ModelType=7 then '法律援助预约'
+		when
+		a.ModelType=8 then '律师预约'
+		else '标题' end) as typeName,
+		a.ModelType,
+		a.ModelId,ifnull(b.RealName,'') as RealName
+		from speed a left join register b
+		on
+		a.registerId=b.UserId
+		where State=#{State} and
+		FIND_IN_SET(a.ModelType,#{modelTypeStr}) and fairworkerId=#{userId} and b.LoginState=0 
+		order by CreateDate desc
+	</select>
+
+	<select id="getScheduleList" resultType="hashmap">
+		select SpeedId,
+		ModelType,ModelId,
+		DATE_FORMAT(a.CreateDate,'%Y-%m-%d %H:%i:%s') as CreateDate,
+		a.State,
+		(
+		case when a.State=0 and
+		a.ModelType>=0 and a.ModelType <![CDATA[<=]]>3
+		then '待审批'
+		when a.State=0 and a.ModelType>=4 and a.ModelType<![CDATA[<=]]>8
+		then '待确定'
+		when a.State=1 and a.ModelType>=0 and a.ModelType<![CDATA[<=]]>3
+		then '审批中'
+		when a.State=1 and a.ModelType>=4 and a.ModelType<![CDATA[<=]]>8
+		then '预约成功'
+		when a.State=2 and a.ModelType>=0 and a.ModelType<![CDATA[<=]]>3
+		then '审核通过'
+		when a.State=2 and a.ModelType>=4 and a.ModelType<![CDATA[<=]]>8
+		then '预约失败'
+		when a.State=3 and a.ModelType>=0 and a.ModelType<![CDATA[<=]]>3
+		then '补充材料'
+		when a.State=3 and a.ModelType>=4 and a.ModelType<![CDATA[<=]]>8
+		then '更改预约时间'
+		when a.State=4 and a.ModelType>=0 and a.ModelType<![CDATA[<=]]>3
+		then '已撤销'
+		when a.State=4 and a.ModelType>=4 and a.ModelType<![CDATA[<=]]>8
+		then '补充材料'
+		when a.State=5 then '未通过'
+		else
+		'状态' end
+		) as StateStr,
+		ifnull(b.WorkerName,'') as WorkerName,ifnull(b.Telephone,'') as Telephone,
+		(
+		case when ModelType=0
+		then
+		(select ifnull(bb.BiddingMattersTitle,'') as BiddingMattersTitle  from just aa left join
+		biddingmatters bb
+		on aa.BiddingMattersId=bb.BiddingMattersId
+		where
+		aa.justId=a.ModelId limit 1)
+		when ModelType=1 then
+		(select ifnull(bb.title,'') as title from
+		authentic aa left join assistance bb
+		on aa.assistanceId=bb.assistanceId
+		where AuthenticId=a.ModelId and bb.State=0 and assistancetype=1 limit
+		1)
+		when ModelType=2 then
+		(select ifnull(bb.title,'') as title from appraisal aa left join
+		assistance bb on
+		aa.MatterType=bb.assistanceId
+		where
+		aa.AppraisalId=a.ModelId and bb.State=0 and assistancetype=2 limit 1)
+		when ModelType=3 then
+		(select ifnull(bb.title,'') as title from lawhelp aa left join
+		assistance bb on
+		aa.assistanceId=bb.assistanceId
+		where aa.LawHelpId=
+		a.ModelId and bb.State=0 and assistancetype=0 limit 1)
+		else
+		(select
+		ifnull(bb.subscribeType,'') as subscribeType from subscribe aa left join subscribetype bb on
+		aa.subscribeType=bb.id
+		where aa.subscribeId=a.ModelId and
+		aa.subscribeType=bb.id limit
+		1)
+		end
+		) as typeStr,a.evaluateState
+		from speed a left join fairworker b
+		on
+		a.fairworkerId=b.FairWorkerId
+		where registerId=#{userId} and
+		ModelType=#{modelType}
+		order by CreateDate desc
+	</select>
+
+	<!-- 修改进度或更新评价 -->
+	<update id="updateSpeed" parameterType="com.xzx.model.Speed">
+		UPDATE speed
+		<trim prefix="set" suffixOverrides=",">
+			<if test="State!=null">State=#{State},</if>
+			<if test="refuseReason!=null and refuseReason!=''">refuseReason=#{refuseReason},</if>
+			<if test="addReason!=null and addReason!=''">addReason=#{addReason},</if>
+			<if test="evaluateType!=null">evaluateType=#{evaluateType},</if>
+			<if test="evaluateContext!=null and evaluateContext!=''">evaluateContext=#{evaluateContext},</if>
+			<if test="evaluateState!=null and evaluateState!=''">evaluateState=#{evaluateState},</if>
+			<if test="cancelReason!=null and cancelReason!=''">cancelReason=#{cancelReason},</if>
+		</trim>
+		WHERE SpeedId=#{SpeedId}
+	</update>
+	
+		<select id="getProgressByParam" resultType="com.xzx.viewModel.ProgressInfos">
+		select a.CreateDate,a.SpeedId,b.StateStr,b.ModelId,b.ModelType,0 as IsOnline,
+		(
+		case when a.ModelType=0 then
+		(select bb.BiddingMattersTitle from just aa left join biddingmatters bb
+		on aa.BiddingMattersId=bb.BiddingMattersId
+		where aa.justId=a.ModelId limit 1)
+		when a.ModelType=1 then
+		(select bb.title from authentic aa left join assistance bb
+		on aa.assistanceId=bb.assistanceId
+		where AuthenticId=a.ModelId and bb.State=0 and assistancetype=1 limit 1)
+		when a.ModelType=2 then
+		(select bb.title from appraisal aa left join assistance bb on
+		aa.MatterType=bb.assistanceId
+		where aa.AppraisalId=a.ModelId and bb.State=0 and assistancetype=2 limit 1)
+		when a.ModelType=3 then
+		(select bb.title from lawhelp aa left join assistance bb on
+		aa.assistanceId=bb.assistanceId
+		where aa.LawHelpId= a.ModelId and bb.State=0 and assistancetype=0 limit 1)
+		else
+		case when a.ModelType<![CDATA[!= ]]>6 then (
+		(select aa.subscribeType  from subscribetype aa left join subscribe bb 
+		on aa.id=bb.subscribeType
+		where aa.state=0 and bb.subscribeId=a.ModelId limit 1))
+		else (
+		(select title from assistance aa left join subscribe bb
+		on aa.assistanceId=bb.authenticateType
+		where assistancetype=2 and bb.subscribeId=a.ModelId)
+		) end 
+		end
+		) as typeStr
+		from speed a left join
+		(select GROUP_CONCAT(State ORDER BY CreateDate SEPARATOR ',') as
+		StateStr,ModelType,ModelId
+		from speedhistory
+		where registerId=#{userId} and FIND_IN_SET(ModelType,#{modelType})
+		group by ModelType,ModelId) b
+		on a.ModelType=b.ModelType and a.ModelId=b.ModelId
+		where a.registerId=#{userId} and FIND_IN_SET(a.ModelType,#{modelType})
+		order by a.CreateDate desc
+	</select>
+
+	<select id="getProgressByParamLive" resultType="com.xzx.viewModel.ProgressInfos">
+		select a.CreateDate,a.SpeedId,b.StateStr,b.ModelId,b.ModelType,c.IsOnline,
+		(
+		case when a.ModelType=0 then
+		(select bb.BiddingMattersTitle from just aa left join biddingmatters bb
+		on aa.BiddingMattersId=bb.BiddingMattersId
+		where aa.justId=a.ModelId limit 1)
+		when a.ModelType=1 then
+		(select bb.title from authentic aa left join assistance bb
+		on aa.assistanceId=bb.assistanceId
+		where AuthenticId=a.ModelId and bb.State=0 and assistancetype=1 limit 1)
+		when a.ModelType=2 then
+		(select bb.title from appraisal aa left join assistance bb on
+		aa.MatterType=bb.assistanceId
+		where aa.AppraisalId=a.ModelId and bb.State=0 and assistancetype=2 limit 1)
+		when a.ModelType=3 then
+		(select bb.title from lawhelp aa left join assistance bb on
+		aa.assistanceId=bb.assistanceId
+		where aa.LawHelpId= a.ModelId and bb.State=0 and assistancetype=0 limit 1)
+		else
+		case when a.ModelType<![CDATA[!= ]]>6 then (
+		(select aa.subscribeType  from subscribetype aa left join subscribe bb 
+		on aa.id=bb.subscribeType
+		where aa.state=0 and bb.subscribeId=a.ModelId limit 1))
+		else (
+		(select title from assistance aa left join subscribe bb
+		on aa.assistanceId=bb.authenticateType
+		where assistancetype=2 and bb.subscribeId=a.ModelId)
+		) end 
+		end
+		) as typeStr
+		from speed a left join
+		(select GROUP_CONCAT(State ORDER BY CreateDate SEPARATOR ',') as
+		StateStr,ModelType,ModelId
+		from speedhistory
+		where registerId=#{userId} and FIND_IN_SET(ModelType,#{modelType})
+		group by ModelType,ModelId) b
+		on a.ModelType=b.ModelType and a.ModelId=b.ModelId
+		left join authentic c
+		on a.ModelId=c.AuthenticId
+		where a.registerId=#{userId} and FIND_IN_SET(a.ModelType,#{modelType})
+		<if test="IsOnline!= null and IsOnline!= ''">
+		 and c.IsOnline=#{IsOnline}
+		</if>
+		order by a.CreateDate desc
+	</select>
+</mapper>

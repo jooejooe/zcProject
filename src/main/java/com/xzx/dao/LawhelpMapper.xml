@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.LawhelpMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Lawhelp">
+		<id column="LawHelpId" property="LawHelpId" />
+		<result column="LawDepartment" property="LawDepartment" />
+		<result column="ApplicantTypeId" property="ApplicantTypeId" />
+		<result column="assistanceId" property="assistanceId" />
+		<result column="UserId" property="UserId" />
+		<result column="OtherPartyId" property="OtherPartyId" />
+		<result column="LawState" property="LawState" />
+		<result column="Summary" property="Summary" />
+		<result column="Context" property="Context" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="RegionId" property="RegionId" />
+	</resultMap>
+
+	<select id="getItemInfoById" resultType="com.xzx.viewModel.ItemDetailInfo">
+		select b.RealName,b.SFZH as ApplySFZH,b.Telephone as
+		ApplyPhone,ifnull(c.DepartmentName,'') as DepartmentName,
+		DATE_FORMAT(a.CreateDate,'%Y-%m-%d %H:%i:%s') as
+		CreateDate,ifnull(a.Context,'') as Context,ifnull(d.Title,'') as applyType,
+		a.LawHelpId as
+		BusinessId,ifnull(e.title,'') as BusinessType,ifnull(f.WorkerName,'') as WorkerName,
+		ifnull(f.Telephone,'') as WorkerTelephone,ifnull(f.Image,'') as fairworkerImg,ifnull(c.DepartmentPhone,'') as DepartmentPhone,
+		ifnull((select 
+			(case when evaluateType=0 then '非常满意'
+			when evaluateType=1 then '满意'
+			when evaluateType=2 then '一般'
+			when evaluateType=3 then '不满意' 
+			else ' ' end) as evaluateStr
+			from speed a where ModelType=3 and ModelId=#{lawHelpId} and registerId=a.UserId and evaluateState=1
+		),'') as evaluateTypeStr
+		from lawhelp a left join
+		register b
+		on a.UserId=b.UserId
+		left join department c
+		on
+		a.LawDepartment=c.DepartmentId
+		left join applicanttype d
+		on
+		a.ApplicantTypeId=d.ApplicantTypeId
+		left join assistance e
+		on
+		a.assistanceId=e.assistanceId
+		left join fairworker f
+		on
+		a.FairworkerId=f.FairWorkerId
+		where LawHelpId=#{lawHelpId} and
+		e.State=0 and assistancetype=0
+		<!-- and a.UserId=#{userId} -->
+	</select>
+</mapper>

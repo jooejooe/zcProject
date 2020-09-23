@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.ZcdwMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Zcdw">
+        <id column="zcdwId" property="zcdwId" />
+        <result column="dwmc" property="dwmc" />
+        <result column="fddbr" property="fddbr" />
+        <result column="zw" property="zw" />
+        <result column="dzxx" property="dzxx" />
+        <result column="zcqq" property="zcqq" />
+    </resultMap>
+
+    <insert id="insertZcdwInfo" parameterType="com.xzx.model.Zcdw">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="zcdwId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into zcdw(dwmc, fddbr, zw, dzxx, zcqq)
+        values (#{dwmc}, #{fddbr}, #{zw}, #{dzxx}, #{zcqq})
+    </insert>
+
+</mapper>

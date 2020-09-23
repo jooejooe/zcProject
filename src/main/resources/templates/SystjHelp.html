@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><!--引入thymeleaf-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>接口说明</title>
+
+    <style type="text/css">
+        body,
+        html,
+        input {
+            font-family: "微软雅黑";
+        }
+    </style>
+</head>
+<body>
+    <div id="div-tj" ><pre>
+
+        --------------------------------------------------------------------------------------
+        接口说明
+        ip:根据部署而定
+        --------------------------------------------------------------------------------------
+        1.登录接口(post)：
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'userlogin',phone:'13633630056',password:'654321'}}
+        说明
+        operation：  为操作参数
+        phone：      登录手机号码
+        password：   登录密码
+        成功返回值
+        {"fairWorkerId":"657","phone":"13633630056","roleid":"12","departmentId":"234","actionList":[
+        {"Num":"1001","Service":"咨询管理","ActionState":1,"Webname":"zx"},
+        {"Num":"10010001","Service":"现场咨询","ActionState":1,"Webname":"zx-xczx"},
+        {"Num":"1002","Service":"受案管理","ActionState":1,"Webname":"sa"},
+        {"Num":"10020001","Service":"现场受案","ActionState":1,"Webname":"sa-xcsa"},
+        {"Num":"1003","Service":"调解管理","ActionState":1,"Webname":"tj"},
+        {"Num":"10030001","Service":"现场指派","ActionState":1,"Webname":"tj-xczp"},
+        {"Num":"10030002","Service":"现场调解","ActionState":1,"Webname":"tj-xctj"}
+        ],"workerName":"白玉龙","operation":"userlogin","info":"0"}
+        说明
+        info:         0为成功，1为用户或密码不正确
+        operation：   操作参数
+        fairWorkerId: 工作人员ID
+        phone：       电话号
+        departmentId：单位ID
+        roleid:       角色ID
+        workerName：  工作人员姓名
+        actionList：  权限
+        Num:          功能编码,四位为一级菜单，8位为二级菜单，如10010001是1001的二级菜单
+        Service：     服务名称
+        ActionState： 权限拥有值，1为可用，0 为禁用
+        Webname:      服务的web页名称或链接地址,确定后对数据进行维护
+        operation：   操作参数
+        失败返回值：{"info":"1"}
+        说明 用户或密码不正确
+        --------------------------------------------------------------------------------------
+        2.新增咨询信息(post)
+
+        新建咨询：属性包括读卡按钮（读取身份证）、姓名（文本、可编辑）、身份证号（文本、可编辑）、
+        指纹信息（录入指纹）、电子签名（调取手写板输入的签名）、照片（调用高拍仪进行拍照）、联系方
+        式（文本、可编辑）、案件类别（下拉选项，读取数据字典）、案情简述（文本、可编辑，支持科达讯
+        飞语音输入转文字，并且支持对语音的录音存储）、下拉选项，包括问题解决（如果选择问题解决，则
+        输入填写咨询记录文本）、问题未解决、问题未解决，转至其它部门（这时出现法律服务类别的下拉选
+        项（公证、调解、援助、鉴定、律师），选择某一项法律服务类别后出现机构的下拉选项供选择）。
+
+        http://118.25.144.143:5662/Systj
+        参数
+        {info:{operation:'insertSeek',dsrxm:'dsrxm',dsrsfzh:'dsrsfzh',zxsx:'zxsx',zxjg:'1',zxjlwb:'zxjlwb',
+        departmentId:'11',otherzxjg:'111',czrId:'1111',image:'',jdlb:'1',zwxx:'123456789',dzqm:'987654321',
+        lxdh:'13788888888',ajlb:'2',fwlb:'1'}}
+        说明:
+        operation：   (必填)insertSeek 新增现场咨询信息
+        jdlb：        (必填)咨询解答类别 0 现场咨询  1 电话咨询
+        dsrxm：       当事人姓名
+        dsrsfzh：     当事人身份证号
+        zwxx：        指纹信息
+        dzqm：        电子签名
+        image：       照片 base64字节流
+        lxdh：	      联系方式
+        ajlb：	      案件类别
+        zxsx：	      案情简述(咨询事项)
+        zxjg：        咨询结果 0 已解决  1 未解决  2 未解决，转其他部门
+        zxjlwb：      咨询记录文本，当选择已解决，填该字段内容
+        fwlb：        司法服务类别 0 公正 1 调解 2 法律援助 3 司法鉴定 4 律师
+        departmentId：转移到的部门ID
+        otherzxjg：   转移到其他部门后，其他部门填写的咨询结果 0 已解决 1 未解决
+        czrId：       添加人id  取工作人员表主键ID
+
+
+        参数如果没有可以不传或为传空串
+
+        成功返回值
+        {"info":"0"}
+        说明
+        失败返回值
+        {"info":"1"}
+        --------------------------------------------------------------------------------------
+        3.新增现场受案信息(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { "info":{ operation:'insertAuthentic',AuthDepartId:'1',
+        jfxm:'jfxm',yfxm:'yfxm',jfsfzh:'230405197601200613',yfsfzh:'230405198004260612',jfzz:'jfzz',
+        yfzz:'yfzz',jfzp:'',yfzp:'',jfzw:'jfzw',yfzw:'yfzw',
+        SummaryContext:'SummaryContext',isonline:1,
+        Context:'Context',RegionId:'6',assistanceId:'7',FairworkerId:'8',UserContext:'UserContext',OtherContext:'OtherContext',
+        fjxx:[{fjmc:'fjmc',fjtp:''},{fjmc:'fjmc',fjtp:''}]
+        }}
+        说明:
+        operation：     insertAuthentic 新增现场受案信息
+        AuthDepartId：	调解机构ID
+        jfxm：          甲方姓名
+        yfxm：          乙方姓名
+        jfsfzh：        甲方身份证
+        yfsfzh：        乙方身份证
+        jfsjh：         甲方手机号
+        yfsjh：         乙方手机号
+        jfzz：          甲方住址
+        yfzz：          乙方住址
+        jfzp：          甲方照片
+        yfzp：          乙方照片
+        jfzw：          甲方指纹
+        yfzw：          乙方指纹
+        fjxx：          附件信息
+        fjmc：          附件名称
+        fjtp：          附件图片
+        SummaryContext：纠纷概要
+        Context：	    当事人申请事项
+        CreateDate：	创建时间
+        RegionId：	    区域ID
+        assistanceId：	调解类别 取在线申办数据字典
+        FairworkerId：	工作人员ID
+        UserContext：	甲方当事人案情陈述
+        OtherContext：	乙方当事人案情陈述
+        YYSJ：	        预约时间
+        zprId：	        指派人id 关联工作人员表主键ID
+        zpsj：	        指派时间
+        SPSJ：	        审批时间
+        isonline：      0  在线办理，1 现场办理，2 委托机构办理
+        参数如果没有可以不传或为传空串
+
+        成功返回值
+        {"AuthenticId":"103","info":"0"}
+        AuthenticId:     受案信息ID
+        说明
+        失败返回值
+        {"info":"1"}
+        --------------------------------------------------------------------------------------
+        4.现场受案判断(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { "info":{ operation:'haveAuthentic',jfsfzh:'230405197601200613',yfsfzh:'230405198004260612',ajlbid：'1'}}
+        说明:
+        operation：     haveAuthentic 现场受案判断
+        jfsfzh：        甲方身份证
+        yfsfzh：        乙方身份证
+        ajlbid：        案件类别 为1
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行，有未完成的信息
+
+        --------------------------------------------------------------------------------------
+        5.修改受案信息(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { "info":{ operation:'updateAuthentic',AuthenticId:'95',OtherPartyId:'100',
+        OtherContext:'OtherContextOtherContextOtherContext'}}
+
+        { "info":{ operation:'updateAuthentic',AuthenticId:'95',jfsfzh:'232321199511108245',
+        yfsfzh:'230221198307285234',OtherContext:'OtherContextOtherContextOtherContext'}}
+        说明:
+        operation：     updateAuthentic 现场受案判断
+        AuthenticId：   受案信息ID
+        jfxm：          甲方姓名
+        yfxm：          乙方姓名
+        jfsfzh：        甲方身份证
+        yfsfzh：        乙方身份证
+        jfsjh：         甲方手机号
+        yfsjh：         乙方手机号
+        jfzz：          甲方住址
+        yfzz：          乙方住址
+        jfzp：          甲方照片
+        yfzp：          乙方照片
+        jfzw：          甲方指纹
+        yfzw：          乙方指纹
+        fjxx：          附件信息
+        fjmc：          附件名称
+        fjtp：          附件图片
+        AuthDepartId：	调解机构ID
+        UserId:         甲方ID
+        OtherPartyId:   乙方ID
+        SummaryContext：纠纷概要
+        Context：	    当事人申请事项
+        CreateDate：	创建时间
+        RegionId：	    区域ID
+        assistanceId：	调解类别 取在线申办数据字典
+        FairworkerId：	工作人员ID
+        UserContext：	甲方当事人案情陈述
+        OtherContext：	乙方当事人案情陈述
+        YYSJ：	        预约时间
+        zprId：	        指派人id 关联工作人员表主键ID
+        zpsj：	        指派时间
+        SPSJ：	        审批时间
+        参数如果没有可以不传或为传空串
+
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行，有未完成的信息
+        --------------------------------------------------------------------------------------
+        6.咨询信息分页(get)
+        查询条件包括身份证号查询（精确查询）、案件类别（读取数据字典）、咨询结果（下拉选项，0 已解决  1 未解决  2 未解决，转其他部门）
+        显示现场咨询录入的信息项，内容为姓名、身份证号、案件类别、咨询结果
+        （问题已解决、问题未解决、问题未解决，转至***其它部门。如果未进行咨询结果确认时，显示无）、创建时间、创建人
+
+        http://118.25.144.143:5662/getPageSeek?sfzh=&ajlb=&zxjg=&jdlb=0&limit=10&page=1
+        参数
+        sfzh=&ajlb=&zxjg=&jdlb=0&limit=10&page=1
+        说明:
+        sfzh：        人身份证号
+        ajlb：        案件类别
+        zxjg：        咨询结果
+        jdlb：        咨询解答类别 0 现场咨询  1 电话咨询
+        参数为空时表示全部
+
+        成功返回值
+        {"msg":"成功","data":[
+        {"czsj":"2020-04-27 10:10:58","ajlb":"抚养费","zxjg":"未解决","cjr":"白玉龙","seekId":43,"dsrxm":"吕晶"}
+        ],"count":1}
+        说明:
+        czsj:         创建时间
+        ajlb:         案件类别
+        zxjg:         咨询结果
+        cjr:          创建人
+        dsrsfzh:      身份证号
+        dsrxm:        姓名
+        seekId:       咨询信信息ID
+
+        无记录返回值
+        {"rowcount":0,"pagecount":0,"pagesize":10,"pagenum":1,"info":[]}
+        --------------------------------------------------------------------------------------
+        7.咨询信息查找ID(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        {info:{operation:'findidSeek',seekId:'54'}}
+        说明:
+        operation：   findidSeek 咨询信息查找ID
+        seekId：      咨询信息ID
+
+        成功返回值
+        {"info":{"czsj":"2020-05-07 20:08:29","jdlb":1,"zxjg":1,"lxdh":"13766666666",
+        "zwxx":"123456789","departmentId":11,"cjr":"白玉龙","dsrsfzh":"232321199511108245",
+        "seekId":54,"dsrxm":"dsrxm","ajlb":2,"zxjlwb":"zxjlwb","fylb":1,"zxsx":"zxsx",
+        "czrId":657,"dzqm":"987654321","dsrimage":"","otherzxjg":222}}
+        说明
+        seekId：      咨询信息ID
+        jdlb：        (必填)咨询解答类别 0 现场咨询  1 电话咨询
+        dsrxm：       当事人姓名
+        dsrimage：    当事人照片 存路径地址
+        dsrsfzh：     当事人身份证号
+        zwxx：        指纹信息
+        dzqm：        电子签名
+        image：       照片 base64字节流
+        lxdh：	      联系方式
+        ajlb：	      案件类别
+        zxsx：	      案情简述(咨询事项)
+        zxjg：        咨询结果 0 已解决  1 未解决  2 未解决，转其他部门
+        zxjlwb：      咨询记录文本，当选择已解决，填该字段内容
+        fwlb：        司法服务类别 0 公正 1 调解 2 法律援助 3 司法鉴定 4 律师
+        departmentId：转移到的部门ID
+        otherzxjg：   转移到其他部门后，其他部门填写的咨询结果 0 已解决 1 未解决
+        czrId：       添加人id  取工作人员表主键ID
+
+        失败返回值
+        {"info":null} 没有记录
+        --------------------------------------------------------------------------------------
+        8.修改咨询信息(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        {info:{operation:'updateSeek',seekId:'54',dsrxm:'dsrxm',dsrsfzh:'dsrsfzh',zxsx:'zxsx',zxjg:'1',
+        zxjlwb:'zxjlwb',departmentId:'11',otherzxjg:'222',czrId:'1111',image:'',jdlb:'1',zwxx:'123456789',
+        dzqm:'987654321',lxdh:'13766666666',ajlb:'2',fwlb:'1'}}
+        说明:
+        operation：   updateSeek 修改咨询信息
+        seekId：      咨询信息ID
+        jdlb：        (必填)咨询解答类别 0 现场咨询  1 电话咨询
+        dsrxm：       当事人姓名
+        dsrsfzh：     当事人身份证号
+        zwxx：        指纹信息
+        dzqm：        电子签名
+        image：       照片 base64字节流
+        lxdh：	      联系方式
+        ajlb：	      案件类别
+        zxsx：	      案情简述(咨询事项)
+        zxjg：        咨询结果 0 已解决  1 未解决  2 未解决，转其他部门
+        zxjlwb：      咨询记录文本，当选择已解决，填该字段内容
+        fwlb：        司法服务类别 0 公正 1 调解 2 法律援助 3 司法鉴定 4 律师
+        departmentId：转移到的部门ID
+        otherzxjg：   转移到其他部门后，其他部门填写的咨询结果 0 已解决 1 未解决
+        czrId：       添加人id  取工作人员表主键ID
+        参数如果没有可以不传或为传空串
+
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行，有未完成的信息
+        --------------------------------------------------------------------------------------
+        9.案件登记分页(get)
+        登记案件列表查询：查询条件包括当事人身份证号（甲方或乙方身份证号，精确查找）、案件类别（下拉选项）、预约时间段
+        案件登记列表：显示前台接待人员录入的现场案件登记信息，内容包括甲方姓名、甲方身份证号、乙方姓名、乙方身份证号、
+        案件类别、预约时间、创建时间、创建人、操作（编辑，查看详情）
+
+        http://118.25.144.143:5662/getPageAuthentic?isonline=2&sfzh=&ajlb=&ksrq=&jsrq=&limit=10&page=1
+        参数
+        isonline=2&sfzh=&ajlb=&ksrq=&jsrq=&limit=10&page=1
+        说明:
+        isonline：  0  在线办理，1 现场办理，2 委托机构办理
+        sfzh：        身份证号
+        ajlb：        案件类别
+        ksrq：        开始日期
+        jsrq：        结束日期
+        limit：       页记录数
+        page：        页码
+        参数为空时表示全部
+
+        成功返回值
+        {"msg":"成功","code":0,"data":
+        [
+        {"jfxm":"吕晶","czsj":"2020-04-28 16:04:57","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":92,"jfsfzh":"232321199511108245","yfxm":"吕晶","cjr":"白玉龙","yysj":"2020-04-28 22:10:47"},
+        {"jfxm":"吕晶","czsj":"2020-04-27 18:06:11","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":34,"jfsfzh":"232321199511108245","yfxm":"吕晶","cjr":"白玉龙"},
+        {"jfxm":"吕晶","czsj":"2020-04-27 18:06:34","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":33,"jfsfzh":"232321199511108245","yfxm":"吕晶","cjr":"白玉龙"},
+        {"jfxm":"jfxm","czsj":"2020-04-27 18:06:10","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":32,"jfsfzh":"230405197801200613","yfxm":"吕晶","cjr":"白玉龙"},
+        {"jfxm":"吕晶","czsj":"2020-04-27 18:06:55","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":31,"jfsfzh":"232321199511108245","yfxm":"吕晶","cjr":"白玉龙"},
+        {"jfxm":"吕晶","czsj":"2020-04-27 18:06:54","ajlb":"经济纠纷","yfsfzh":"230405197801200613","AuthenticId":30,"jfsfzh":"232321199511108245","yfxm":"jfxm","cjr":"白玉龙"},
+        {"jfxm":"姜涛","czsj":"2019-12-31 09:09:48","ajlb":"经济纠纷","yfsfzh":"232321199511108245","AuthenticId":15,"jfsfzh":"15210419830718031X","yfxm":"吕晶","cjr":"白玉龙"}
+        ],"count":7}
+        说明:
+        czsj:         创建时间
+        ajlb:         案件类别
+        jfsfzh:       甲方身份证号
+        jfxm:         甲方姓名
+        yfsfzh:       乙方身份证号
+        yfxm:         乙方姓名
+        yysj：        预约时间
+        cjr:          创建人
+        AuthenticId:  信息ID
+
+        无记录返回值
+        {"msg":"成功","code":0,"data":[],count":0}
+
+        --------------------------------------------------------------------------------------
+        10.案件登记ID查找(post)
+        案件登记：属性包括读卡（读取身份证）、甲方姓名（文本，可编辑）、甲方身份证号（文本，可编辑）、甲方手机号（文本，做手机验证码校验）、
+        甲方指纹、甲方照片、乙方姓名（文本，可编辑）、乙方身份证号（文本、可编辑）、乙方手机号（文本，做手机验证码校验）、乙方指纹、乙方照
+        片、案件类别、双方案情简介（语音转文字）、案件要件（根据案件类别显示应该上传的要件名称及个数）、预约时间。上述信息都为必填项。
+
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findidAuthentic',AuthenticId:'104'}}
+        说明:
+        operation：   findidAuthentic  id查找
+        AuthenticId： id
+        成功返回值
+        {"info":{"jfxm":"李通","jfsjh":"18345379657","OtherContext":"陈","yfzw":"/9j/4AAQSkZJRgABAQEAY=","yfsjh":"187456959071"},fjxx:[{fjmc:'fjmc',fjtp:''},{fjmc:'fjmc',fjtp:''}]}
+        说明:
+        jfxm：          甲方姓名
+        yfxm：          乙方姓名
+        jfsfzh：        甲方身份证
+        yfsfzh：        乙方身份证
+        jfsjh：         甲方手机号
+        yfsjh：         乙方手机号
+        jfzz：          甲方住址
+        yfzz：          乙方住址
+        jfzp：          甲方照片
+        yfzp：          乙方照片
+        jfzw：          甲方指纹
+        yfzw：          乙方指纹
+        assistanceId：	调解类别 取在线申办数据字典
+        UserContext：	甲方当事人案情陈述
+        OtherContext：	乙方当事人案情陈述
+        DatasInfo:      要件名称
+        DatasNumber:    要件个数
+        yysj：	        预约时间
+        AuthenticId:    信息ID
+
+        fjxx：          附件信息
+        fjmc：          附件名称
+        fjtp：          附件图片
+
+        无记录返回值
+        {"info":null} 没有记录
+        --------------------------------------------------------------------------------------
+        11.知识库增加(post)
+        知识库添加：添加属性包括标题、内容（文本编辑器）
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'insertKnowbase',title:'title',content:'content',state:'1',creater:'657'}}
+        说明:
+        operation：     insertKnowbase  知识库添加(必填)
+        title：         标题(必填)
+        content：       内容(必填)
+        state：         是否公开 1公开 2不公开(必填)
+        creater：       创建人ID(必填)
+
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行
+        --------------------------------------------------------------------------------------
+        12.修改知识库(post)
+        修改知识库：修改属性包括标题、内容（文本编辑器）
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'updateKnowbase',knowid:'2',title:'updateKnowbase',content:'contentupdateKnowbase',state:'1',creater:'657'}}
+        说明:
+        operation：     insertKnowbase  修改知识库 (必填)
+        knowid：        ID(必填)
+        title：         标题(必填)
+        content：       内容(必填)
+        state：         是否公开 1公开 2不公开(必填)
+        creater：       创建人ID(必填)
+
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行
+        --------------------------------------------------------------------------------------
+        13.删除知识库(post)
+        删除知识库：操作包括删除、公开、不公开
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'deleteKnowbase',knowid:'2',state:'3',creater:'657'}}
+        说明:
+        operation：     deleteKnowbase  删除知识库 (必填)
+        knowid：        ID(必填)
+        state：         是否公开 1公开 2不公开 3删除(必填)
+        creater：       创建人ID(必填)
+
+        成功返回值
+        {"info":"0"} 可以进行
+        说明
+        失败返回值
+        {"info":"1"} 不可进行
+        --------------------------------------------------------------------------------------
+        14.知识库分页(get)
+        查询条件包括:标题、是否公开(1公开 2不公开)
+        http://118.25.144.143:5662/getPageKnowbase?title=&state=0&limit=10&page=1
+        参数
+        title=&state=&limit=10&page=1
+        说明:
+        title：       标题
+        state：       是否公开 1公开 2不公开,0全部 （必填）
+        成功返回值
+        {"msg":"成功","code":0,"data":[
+        {"creater":"白玉龙","createdate":"2020-05-16 12:45:14","state":1,"title":"title","knowid":3},
+        {"creater":"白玉龙","createdate":"2020-05-16 12:21:27","state":1,"title":"title","knowid":1}
+        ],"count":2}
+        说明:
+        knowid:       id
+        title:        标题
+        state:        是否公开 1公开 2不公开
+        creater:      创建人
+        createdate:   创建时间
+
+        无记录返回值
+        {"rowcount":0,"pagecount":0,"pagesize":10,"pagenum":1,"info":[]}
+        --------------------------------------------------------------------------------------
+        15.知识库查找ID(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findidKnowbase',knowid:'1'}}
+        operation：     findidKnowbase  id查找
+        knowid：        id
+        成功返回值
+        {"info":{"state":1,"title":"title","knowid":1,"content":"content"}}
+        说明:
+        knowid:         id
+        title:          标题
+        state:          是否公开 1公开 2不公开
+        content：       内容
+
+        无记录返回值
+        {"info":null} 没有记录
+
+        --------------------------------------------------------------------------------------
+        16.社矫人员注册(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'registerSocial',ryxm:'朱哲龙',ryxb:'0',sfzh:'230405197601200613',sjhm:'13766891959',dlmm:'123456',dqid:'6',jgid:'86'}}
+        operation：     registerSocial  操作参数 （必填）
+        ryxm：          人员姓名（必填）
+        ryxb：          人员性别 性别 0 男 1 女（必填）
+        sfzh：          身份证号（必填）
+        sjhm：          手机号码（必填）
+        dlmm：          登录密码（必填）
+        dqid：          地区ID（必填）
+        jgid：          机构ID(类别司法所的单位)（必填）
+        成功返回值
+        {"info":"0"}
+        失败返回值
+        {"info":"1"}
+
+        --------------------------------------------------------------------------------------
+        17.社矫课件类别(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findSocialVideoType'}}
+        operation：     findSocialVideoType  操作参数（必填）
+        成功返回值
+        {"info":[
+        {"TypeId":28,"TypeName":"公证业务"},
+        {"TypeId":29,"TypeName":"律师业务"},
+        {"TypeId":30,"TypeName":"法律援助"},
+        {"TypeId":31,"TypeName":"司法鉴定"},
+        {"TypeId":32,"TypeName":"人民调解"},
+        {"TypeId":33,"TypeName":"行政复议"},
+        {"TypeId":34,"TypeName":"仲裁办理"}
+        ]}
+
+        说明:
+        TypeId:         类别ID
+        TypeId:         类别名称
+
+        无记录返回值
+        {"info":null}
+
+        --------------------------------------------------------------------------------------
+        18.社矫课件分页查询(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findPageSocialVideo',TypeId:'28',pageSize:2,pageNum:1}}
+        operation：      findPageSocialVideo  操作参数（必填）
+        TypeId：         社矫课件类别TypeId（必填）
+        pageSize：       页记录数
+        pageNum：        查找页数
+
+        成功返回值
+        {"rowCount":1,"pageCount":1,"pageSize":2,"pageNum":1,"operation":"findPageSocialVideo","info":
+        [
+        {"TypeName":"公证业务","Cover":"data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgA","Title":"2222","SocialVideoId":5,"CreateDate":"2020-06-11 15:44:20","ReadNum":0}
+        ]
+        }
+
+        说明：
+        rowCount：       记录数
+        pageCount：      总页数
+        pageSize：       页记录数
+        pageNum：        当前页数
+        TypeName：       课件类别
+        Cover：          课件封面（数据流）
+        Title：          课件标题
+        SocialVideoId：  课件ID
+        CreateDate：     创建日期
+        ReadNum：        阅读数量
+        Minutes：        视频分秒
+
+        无记录返回值
+        {"pageCount":1,"pageSize":2,"rowCount":1,"pageNum":1,"operation":"findPageSocialVideo","info":[]}
+
+        --------------------------------------------------------------------------------------
+        19.社矫课件ID查询(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findIdSocialVideo',SocialVideoId:'4',SocialUserId:'200'}}
+        operation：     findIdSocialVideo  操作参数（必填）
+        SocialVideoId:  社矫课件ID（必填）
+        SocialUserId：  社矫用户ID（登录时的UserID）（必填）
+        成功返回值
+        {"Liked":1,"info":{"Des":"介绍描述说明","LikedNum":1,"Video":"/FileUpload/5c1c109351b84f73912604f5f15f5381.mp4",
+        "Title":"4234111人人786786787777778899","SocialVideoId":4,"CreateDate":"2020-03-01 16:32:36","ReadNum":2}}
+        说明：
+        Liked：          点赞 1已点赞 0 未点赞
+        LikedNum：       点赞数量
+        Video：          视频路径(前缀：5665)
+        Title：          课件标题
+        Des：            介绍描述说明
+        SocialVideoId：  课件ID
+        CreateDate：     创建日期
+        ReadNum：        阅读数量
+
+        --------------------------------------------------------------------------------------
+        20.社矫课件阅读(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'readSocialVideo',SocialVideoId:'4'}}
+        operation：     readSocialVideo  操作参数（必填）
+        SocialVideoId:  社矫课件ID（必填）
+        成功返回值
+        {"ReadNum":3}
+        说明：
+        ReadNum：        阅读数量(增加后的数量)
+
+        --------------------------------------------------------------------------------------
+        21.社矫课件点赞(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'likedSocialVideo',SocialVideoId:'4',SocialUserId:'200',Liked:'0'}}
+        operation：      likedSocialVideo  操作参数（必填）
+        SocialVideoId：  社矫课件ID（必填）
+        SocialUserId：   社矫用户ID（登录时的UserID）（必填）
+        Liked：          点赞 1点赞 0 取消点赞 (****根据社矫课件ID查询的返回Liked确定相反的值****)
+        成功返回值
+        {"LikedNum":0,"Liked":"0"}
+        说明：
+        Liked：          点赞 1已点赞 0 未点赞(用户当前的点赞情况)
+        LikedNum：       点赞数量(增减后的数量)
+
+        --------------------------------------------------------------------------------------
+        22.社矫课件学习(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'learnSocialVideo',SocialVideoId:'4',SocialUserId:'200'}}
+        operation：      learnSocialVideo  操作参数（必填）
+        SocialVideoId：  社矫课件ID（必填）
+        SocialUserId：   社矫用户ID（登录时的UserID）（必填）
+
+        成功返回值
+        {"info":"0"}
+        说明：
+        info：         0 第一次学习状态， 1 不记学习状态
+
+        --------------------------------------------------------------------------------------
+        23.社矫课件评论(分页)(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'findPageDiscuss',SocialVideoId:'4',pageSize:'2',pageNum:'1'}}
+        operation：      findPageDiscuss  操作参数（必填）
+        SocialVideoId：  社矫课件ID（必填）
+        pageSize：       页记录数（必填）
+        pageNum：        查找页数（必填）
+
+        成功返回值
+        {"pageCount":1,"pageSize":2,"rowCount":1,"pageNum":1,"info":[
+        {"Discuss":"Discuss","RealName":"社矫人员张","Image":"data:image/jpg;base64,/9j/4AAQSkZJRgAB","CreateDate":"2020-06-16 11:30:53"}
+        ]
+        }
+        说明：
+        rowCount：       记录数
+        pageCount：      总页数
+        pageSize：       页记录数
+        pageNum：        当前页数
+        Discuss：        评论内容
+        RealName：       人员姓名
+        Image：          人员头像（如果没有此字段表示为null，用默认头像图片）
+        CreateDate：     创建日期
+        无记录返回值
+        {"pageCount":1,"pageSize":2,"rowCount":1,"pageNum":1,"info":[]}
+
+        --------------------------------------------------------------------------------------
+        24.社矫课件评论(增加)(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'discussSocialVideo',SocialVideoId:'4',SocialUserId:'200',Discuss:'DiscussDiscuss'}}
+        operation：      discussSocialVideo  操作参数（必填）
+        SocialVideoId：  社矫课件ID（必填）
+        SocialUserId：   社矫用户ID（登录时的UserID）（必填）
+        Discuss：        评论内容
+        成功返回值
+        {"info":"0"}
+        失败返回值
+        {"info":"1"}
+
+        --------------------------------------------------------------------------------------
+        25.社矫人员判断(post)
+        http://118.25.144.143:5662/Systj
+        参数
+        { info:{ operation:'userIdSocial',userId:'200'}}
+        operation：      userIdSocial  操作参数（必填）
+        userId：         登录用户ID（必填）
+        成功返回值
+        {"info":"1"}
+        说明：
+        info：         0 不是社矫人员， 1 是社矫人员
+
+    </pre></div>
+</body>
+</html>

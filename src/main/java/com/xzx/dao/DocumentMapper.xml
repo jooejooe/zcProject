@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.DocumentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Document">
+        <id column="DocId" property="DocId" />
+        <result column="Title" property="Title" />
+        <result column="FileNumber" property="FileNumber" />
+        <result column="FilePath" property="FilePath" />
+        <result column="KeyWord" property="KeyWord" />
+        <result column="PartyAName" property="PartyAName" />
+        <result column="PartyAIdCard" property="PartyAIdCard" />
+        <result column="PartyAPhone" property="PartyAPhone" />
+        <result column="PartyBName" property="PartyBName" />
+        <result column="PartyBIdCard" property="PartyBIdCard" />
+        <result column="PartyBPhone" property="PartyBPhone" />
+        <result column="PartyCName" property="PartyCName" />
+        <result column="PartyCIdCard" property="PartyCIdCard" />
+        <result column="PartyCPhone" property="PartyCPhone" />
+        <result column="CreateDate" property="CreateDate" />
+    </resultMap>
+
+	<!-- 人工查询满足数量 -->
+	<select id="matchItemCount" resultType="int">
+		select count(1) from document
+		where DocType=#{modelType} 
+		<if test="sfzh != null and sfzh != '' ">
+		 and
+		(PartyAIdCard like CONCAT('%',#{sfzh},'%')
+		or PartyBIdCard like CONCAT('%',#{sfzh},'%')
+		or PartyCIdCard like CONCAT('%',#{sfzh},'%')
+		) 
+		</if>
+		<if test="name != null and name != '' ">
+		and
+		(
+		PartyAName like CONCAT('%',#{name},'%') 
+		or PartyBName like CONCAT('%',#{name},'%') 
+		or PartyCName like CONCAT('%',#{name},'%')
+		) 
+		</if>
+		<if test="tel != null and tel != '' ">
+		and
+		(
+		PartyAPhone like CONCAT('%',#{tel},'%')
+		or PartyBPhone like CONCAT('%',#{tel},'%') 
+		or PartyCPhone like CONCAT('%',#{tel},'%')
+		) 
+		</if>
+		<if test="caseNo != null and caseNo != '' ">
+		and FileNumber like CONCAT('%',#{caseNo},'%')
+		</if>
+	</select>
+	
+	<!-- 人工查询列表-->
+	<select id="getPersonalDocsByManual" resultType="com.xzx.model.Document">
+		select * from document
+		where DocType=#{modelType} 
+		<if test="sfzh != null and sfzh != '' ">
+		 and
+		(PartyAIdCard like CONCAT('%',#{sfzh},'%')
+		or PartyBIdCard like CONCAT('%',#{sfzh},'%')
+		or PartyCIdCard like CONCAT('%',#{sfzh},'%')
+		)
+		</if>
+		<if test="name != null and name != '' ">
+		and
+		(
+		PartyAName like CONCAT('%',#{name},'%') 
+		or PartyBName like CONCAT('%',#{name},'%') 
+		or PartyCName like CONCAT('%',#{name},'%')
+		)
+		</if>
+		<if test="tel != null and tel != '' ">
+		and
+		(
+		PartyAPhone like CONCAT('%',#{tel},'%') 
+		or PartyBPhone like CONCAT('%',#{tel},'%')
+		or PartyCPhone like CONCAT('%',#{tel},'%')
+		)
+		</if>
+		<if test="caseNo != null and caseNo != '' ">
+		and FileNumber like CONCAT('%',#{caseNo},'%')
+		</if>
+		order by CreateDate desc
+	</select>
+
+	<!-- 司法机关查询满足数量 -->
+	<select id="matchItemCountByDepartSearch" resultType="int">
+		select count(1) from document
+		where DocType=#{modelType} 
+		<if test="sfzh != null and sfzh != '' ">
+			and PartyCIdCard like CONCAT('%',#{sfzh},'%') 
+		</if>
+		<if test="name != null and name != '' ">
+			and PartyCName like CONCAT('%',#{name},'%') 
+		</if>
+		<if test="tel != null and tel != '' ">
+			and PartyCPhone like CONCAT('%',#{tel},'%')
+		</if>
+	</select>
+	
+	<!-- 司法机关查询列表 -->
+	<select id="getPersonalDocsByDepartment" resultType="com.xzx.model.Document">
+		select * from document
+		where DocType=#{modelType} 
+		<if test="sfzh != null and sfzh != '' ">
+		 and PartyCIdCard like CONCAT('%',#{sfzh},'%') 
+		</if>
+		<if test="name != null and name != '' ">
+		and PartyCName like CONCAT('%',#{name},'%') 
+		</if>
+		<if test="tel != null and tel != '' ">
+		and PartyCPhone like CONCAT('%',#{tel},'%') 	
+		</if>
+		order by CreateDate desc
+	</select>
+</mapper>

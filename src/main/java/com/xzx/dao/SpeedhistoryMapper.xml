@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SpeedhistoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Speedhistory">
+        <id column="SpeedHistoryId" property="SpeedHistoryId" />
+        <result column="ModelType" property="ModelType" />
+        <result column="ModelId" property="ModelId" />
+        <result column="CreateDate" property="CreateDate" />
+        <result column="State" property="State" />
+        <result column="refuseReason" property="refuseReason" />
+        <result column="addReason" property="addReason" />
+        <result column="evaluateType" property="evaluateType" />
+        <result column="evaluateContext" property="evaluateContext" />
+        <result column="fairworkerId" property="fairworkerId" />
+        <result column="registerId" property="registerId" />
+        <result column="sqfinfoId" property="sqfinfoId" />
+        <result column="bsqfinfoId" property="bsqfinfoId" />
+    </resultMap>
+
+</mapper>

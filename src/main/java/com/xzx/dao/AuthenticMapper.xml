@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.AuthenticMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Authentic">
+		<id column="AuthenticId" property="AuthenticId" />
+		<result column="AuthDepartId" property="AuthDepartId" />
+		<result column="UserId" property="UserId" />
+		<result column="OtherPartyId" property="OtherPartyId" />
+		<result column="SummaryContext" property="SummaryContext" />
+		<result column="Context" property="Context" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="RegionId" property="RegionId" />
+		<result column="assistanceId" property="assistanceId" />
+		<result column="assistanceSecondId" property="assistanceSecondId" />
+		<result column="sqfinfoId" property="sqfinfoId" />
+		<result column="bsqfinfoId" property="bsqfinfoId" />
+		<result column="sqfay" property="sqfay" />
+		<result column="bsqfay" property="bsqfay" />
+		<result column="sqfdwid" property="sqfdwid" />
+		<result column="bsqfdwid" property="bsqfdwid" />
+		<result column="bsqfdwid" property="bsqfdwid" />
+		<result column="IsOnline" property="IsOnline"/>
+		<result column="slf" property="slf"/>
+		<result column="cgclf" property="cgclf"/>
+		<result column="tsclf" property="tsclf"/>
+		<result column="ajje" property="ajje"/>
+	</resultMap>
+
+
+	<insert id="insertAuthInfo" parameterType="com.xzx.model.Authentic">
+
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="AuthenticId">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into authentic (IsOnline,CreateDate,AuthDepartId,sqfinfoId,bsqfinfoId,SummaryContext,Context,RegionId,assistanceId,assistanceSecondId,FairworkerId,UserContext,OtherContext,sqfay,bsqfay,YYSJ,zprId,zpsj,SPSJ,slf,cgclf,tsclf,ajje,UserId,OtherPartyId)
+		values (#{IsOnline},#{CreateDate},#{AuthDepartId},#{sqfinfoId},#{bsqfinfoId},#{SummaryContext},#{Context},#{RegionId},#{assistanceId},#{assistanceSecondId},#{FairworkerId},#{UserContext},#{OtherContext},#{sqfay},#{bsqfay},#{YYSJ},#{zprId},#{zpsj},#{SPSJ},#{slf},#{cgclf},#{tsclf},#{ajje},#{UserId},#{OtherPartyId})
+	</insert>
+
+	<select id="getItemInfoById" resultType="com.xzx.viewModel.ItemDetailInfo">
+		select DATE_FORMAT(a.CreateDate,'%Y-%m-%d %H:%i:%s') as
+		CreateDate,ifnull(b.DepartmentName,'') as
+		DepartmentName,ifnull(b.DepartmentAddress,'') as DepartmentAddress,
+		ifnull(b.DepartmentPhone,'') as DepartmentPhone,a.AuthenticId as
+		BusinessId,c.RealName,c.SFZH as
+		ApplySFZH,c.Telephone as ApplyPhone,
+		ifnull(d.title,'') as BusinessType,ifnull(e.WorkerName,'') as
+		WorkerName,ifnull(e.Image,'') as fairworkerImg,
+		ifnull(e.Telephone,'')
+		as WorkerTelephone,
+		ifnull((select
+		(case when evaluateType=0 then '非常满意'
+		when evaluateType=1 then '满意'
+		when evaluateType=2 then '一般'
+		when
+		evaluateType=3 then '不满意'
+		else ' ' end) as evaluateStr
+		from speed a
+		where ModelType=1 and ModelId=#{authenticId} and
+		registerId=a.UserId
+		and evaluateState=1
+		),'') as evaluateTypeStr
+		from
+		authentic a left join
+		department b
+		on
+		a.AuthDepartId=b.DepartmentId
+		left
+		join register c
+		on
+		a.UserId=c.UserId
+		left join assistance d
+		on
+		a.assistanceId=d.assistanceId
+		left join
+		fairworker e
+		on
+		a.FairworkerId=e.FairWorkerId
+		where
+		AuthenticId=#{authenticId} and
+		d.State=0 and assistancetype=1
+		<!-- and a.UserId=#{userId} -->
+	</select>
+
+	<select id="getAssignCaseList" resultType="com.xzx.viewModel.CaseAssignInfos">
+		select * from(
+		SELECT AuthenticId as
+		ModelId,YYSJ,SPSJ,QZSJ,aa.FairworkerId,
+		(select
+		count(1) from authentic
+		where copyAuthenticId=aa.AuthenticId) as
+		copyIdCount,
+		(select title
+		from
+		assistance
+		where assistancetype=1 and
+		assistanceId=aa.assistanceId)
+		caseType,
+		(select WorkerName from
+		fairworker where
+		FairWorkerId=aa.FairworkerId)
+		WorkerName,
+		(select
+		pqstart from pq where ` ajId`=aa.AuthenticId) as
+		pqStart,
+		(select pqend
+		from pq where ` ajId`=aa.AuthenticId) as
+		pqEnd,bb.State,bb.SpeedId,aa.CreateDate,cc.WorkerName as wpPerson,zpsj
+		as wpTime,aa.IsOnline,aa.xcsalzvideourl as recordUrl,
+		(select DocId
+		from document where CaseId=aa.AuthenticId and DocType=2 limit
+		1) DocId
+		,(select SFZH from register
+		where UserId=aa.UserId) sfzhA
+		,(select
+		RealName from register
+		where UserId=aa.UserId) nameA
+		,(select RealName
+		from register
+		where UserId=aa.OtherPartyId) nameB
+		,(select SFZH from
+		register where
+		UserId=aa.OtherPartyId) sfzhB,
+		dd.userloginpass,dd.roomId,dd.serverIp,dd.port,dd.pass
+		FROM authentic aa left join
+		speed bb
+		on aa.AuthenticId=bb.ModelId and
+		bb.ModelType=1
+		left join
+		fairworker cc
+		on aa.zprId=cc.FairWorkerId
+		left join meeting dd
+		on aa.FairworkerId=dd.fairworkerid	
+		<if test='operateType == "1"'>
+			where aa.AuthDepartId=#{regionId}
+		</if>
+		<if test='operateType == "2"'>
+			where aa.FairworkerId=#{regionId}
+		</if>
+		<if test="caseType!= null and caseType!= ''">
+			and assistanceId=#{caseType}
+		</if>
+		<if test="spState!= null and spState!= ''">
+			and bb.State =#{spState}
+		</if>
+		<if test="starttime!= null and starttime!= ''">
+			and SPSJ <![CDATA[ >= ]]>#{starttime}
+		</if>
+		<if test="endtime!= null and endtime!= ''">
+			and SPSJ <![CDATA[ <= ]]>#{endtime}
+		</if>
+		<if test="isOnline!=-1">
+			and IsOnline=#{isOnline}
+		</if>
+		) temp
+		where 1=1
+		<if test="dsrSFZH!= null and dsrSFZH!= ''">
+			and sfzhA like concat('%',#{dsrSFZH},'%') or sfzhB like
+			concat('%',#{dsrSFZH},'%')
+		</if>
+		<if test='orderType == "0"'>
+			order by CreateDate desc
+		</if>
+		<if test='orderType == "1"'>
+			order by pqStart desc
+		</if>
+	</select>
+
+	<select id="getAssignCaseListZc" resultType="com.xzx.viewModel.CaseAssignInfos">
+		select * from(
+		SELECT AuthenticId as ModelId,YYSJ,SPSJ,QZSJ,aa.FairworkerId,
+		(select count(1) from authentic where copyAuthenticId=aa.AuthenticId) as copyIdCount,
+		(select title from assistance where assistancetype=1 and assistanceId=aa.assistanceId) caseType,
+		(select Group_concat(assname) from assistancesecond where asssecid=aa.assistanceSecondId ) caseTypeSecond,
+		(select pqstart from pq where ` ajId`=aa.AuthenticId) as pqStart,
+		(select pqend from pq where ` ajId`=aa.AuthenticId) as pqEnd,
+		bb.State,bb.SpeedId,aa.CreateDate,cc.WorkerName as wpPerson,zpsj as wpTime,aa.IsOnline,aa.xcsalzvideourl as recordUrl,
+		(select DocId from document where CaseId=aa.AuthenticId and DocType=2 limit 1) DocId ,
+		(select SFZH from register where UserId = (select dbId from authreginfo where authregId=aa.sqfinfoId )) sfzhA,
+		(select RealName from register where UserId = (select dbId from authreginfo where authregId=aa.sqfinfoId )) nameA,
+		(select RealName from register where UserId = (select dbId from authreginfo where authregId=aa.bsqfinfoId )) nameB ,
+		(select SFZH from register where UserId = (select dbId from authreginfo where authregId=aa.bsqfinfoId )) sfzhB,
+		dd.userloginpass,dd.roomId,dd.serverIp,dd.port,dd.pass,awi.workerids WorkerName,
+		aa.slf,aa.cgclf,aa.tsclf,aa.ajje
+		FROM authentic aa
+		left join speed bb on aa.AuthenticId=bb.ModelId and bb.ModelType=1
+		left join fairworker cc on aa.zprId=cc.FairWorkerId
+		left join meeting dd on aa.FairworkerId=dd.fairworkerid
+		left join authworkerinfo awi on aa.FairworkerId=awi.id
+		<if test='operateType == "1"'>
+			where aa.AuthDepartId=#{regionId}
+		</if>
+		<if test='operateType == "2"'>
+			where aa.FairworkerId=#{regionId}
+		</if>
+		<if test="caseType!= null and caseType!= ''">
+			and assistanceId=#{caseType}
+		</if>
+		<if test="caseTypeSecond!= null and caseTypeSecond!= ''">
+			and assistanceSecondId=#{caseTypeSecond}
+		</if>
+		<if test="spState!= null and spState!= ''">
+			and bb.State =#{spState}
+		</if>
+		<if test="starttime!= null and starttime!= ''">
+			and SPSJ <![CDATA[ >= ]]>#{starttime}
+		</if>
+		<if test="endtime!= null and endtime!= ''">
+			and SPSJ <![CDATA[ <= ]]>#{endtime}
+		</if>
+		<if test="isOnline!=-1">
+			and IsOnline=#{isOnline}
+		</if>
+		) temp
+		where 1=1
+		<if test="dsrSFZH!= null and dsrSFZH!= ''">
+			and sfzhA like concat('%',#{dsrSFZH},'%') or sfzhB like
+			concat('%',#{dsrSFZH},'%')
+		</if>
+		<if test='orderType == "0"'>
+			order by CreateDate desc
+		</if>
+		<if test='orderType == "1"'>
+			order by pqStart desc
+		</if>
+	</select>
+
+	<select id="caseAssginAgain" parameterMap="caseAssginAgainInfo"
+		statementType="CALLABLE" resultType="int">
+		CALL caseAssginAgain(?,?,?)
+	</select>
+
+	<parameterMap type="java.util.Map" id="caseAssginAgainInfo">
+		<parameter property="workerId" mode="IN" jdbcType="INTEGER" />
+		<parameter property="caseId" mode="IN" jdbcType="INTEGER" />
+		<parameter property="assignWorkerId" mode="IN" jdbcType="INTEGER" />
+	</parameterMap>
+
+	<select id="getAllPqList" resultType="com.xzx.viewModel.AllPqInfo">
+		select b.WorkerName,
+		(select RealName from register where UserId=c.UserId) as nameA,
+		(select RealName from register where UserId=c.OtherPartyId) as nameB,
+		d.pqstart,d.pqend,e.title as caseType
+		from speed a
+		left join fairworker b
+		on a.fairworkerId=b.FairWorkerId
+		left join authentic c
+		on a.ModelId=c.AuthenticId
+		left join pq d
+		on c.AuthenticId=d.` ajId`
+		left join assistance e
+		on c.assistanceId=e.assistanceId and assistancetype=1
+		where ModelType=1 and a.State=2 and c.AuthDepartId=#{departId}
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.JustMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Just">
+		<id column="JustId" property="JustId" />
+		<result column="DepartmentId" property="DepartmentId" />
+		<result column="FairWorkerId" property="FairWorkerId" />
+		<result column="JustType" property="JustType" />
+		<result column="Language" property="Language" />
+		<result column="PurposeId" property="PurposeId" />
+		<result column="UsePlaceId" property="UsePlaceId" />
+		<result column="BiddingMagttersMoneyId" property="BiddingMagttersMoneyId" />
+		<result column="BiddingMattersId" property="BiddingMattersId" />
+		<result column="UserId" property="UserId" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="JustState" property="JustState" />
+	</resultMap>
+
+	<select id="getItemInfoById" resultType="com.xzx.viewModel.ItemDetailInfo">
+		select
+		a.JustId as BusinessId,ifnull(b.DepartmentName,'') as DepartmentName,ifnull(c.RealName,'') as RealName,ifnull(c.SFZH,'') as ApplySFZH,ifnull(c.Telephone,'') as ApplyPhone,
+		ifnull(d.WorkerName,'') as WorkerName,ifnull(d.Telephone,'') as WorkerTelephone,
+		ifnull(d.Image,'') as fairworkerImg,ifnull(DATE_FORMAT(a.CreateDate,'%Y-%m-%d %H:%i:%s'),'') as CreateDate,
+		ifnull(e.Title,'') as usePlaceName,a.IsDoor,ifnull(f.BiddingMattersTitle,'') as BusinessType,a.BiddingMattersId,ifnull(b.DepartmentPhone,'') as DepartmentPhone,
+		ifnull((select 
+			(case when evaluateType=0 then '非常满意'
+			when evaluateType=1 then '满意'
+			when evaluateType=2 then '一般'
+			when evaluateType=3 then '不满意' 
+			else ' ' end) as evaluateStr
+			from speed a where ModelType=0 and ModelId=#{justId} and registerId=a.UserId and evaluateState=1
+		),'') as evaluateTypeStr
+		from just a left join department b
+		on a.DepartmentId=b.DepartmentId
+		left join register c
+		on a.UserId=c.UserId
+		left join fairworker d
+		on a.FairWorkerId=d.FairWorkerId
+		left join useplace e
+		on a.UsePlaceId=e.UsePlaceId
+		left join biddingmatters f
+		on a.BiddingMattersId=f.BiddingMattersId
+		where JustId=#{justId}
+		<!-- and a.UserId=#{userId} -->
+	</select>
+
+</mapper>

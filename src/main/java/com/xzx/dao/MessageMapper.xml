@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.MessageMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Message">
+		<id column="MessageId" property="MessageId" />
+		<result column="Title" property="Title" />
+		<result column="SendType" property="SendType" />
+		<result column="MessageCover" property="MessageCover" />
+		<result column="MessageSendAccress" property="MessageSendAccress" />
+		<result column="MessageContext" property="MessageContext" />
+		<result column="UserId" property="UserId" />
+		<result column="CreateDate" property="CreateDate" />
+		<result column="SendUserType" property="SendUserType" />
+		<result column="CreateUser" property="CreateUser" />
+	</resultMap>
+
+	<select id="getMessageByParams" resultType="com.xzx.model.Message">
+		select MessageId,Title,IFNULL(MessageCover,'') as MessageCover,MessageContext,CreateDate from
+		((select * from message where SendType=1 and UserId=#{userId} and
+		SendUserType=#{UserType})
+		union all
+		(select * from message where
+		SendType=0 and FIND_IN_SET(SendUserType,#{sendUserType}))) tt
+		<if test="searchText!= null and searchText!= ''">
+			where Title like concat('%',#{searchText},'%')
+		</if>
+		order by CreateDate desc
+	</select>
+</mapper>

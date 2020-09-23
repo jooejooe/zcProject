@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.ApplicanttypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Applicanttype">
+        <id column="ApplicantTypeId" property="ApplicantTypeId" />
+        <result column="Title" property="Title" />
+        <result column="DatasInfo" property="DatasInfo" />
+        <result column="DatasNumber" property="DatasNumber" />
+        <result column="State" property="State" />
+        <result column="CreateDate" property="CreateDate" />
+    </resultMap>
+
+</mapper>

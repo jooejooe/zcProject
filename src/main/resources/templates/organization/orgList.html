@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--引入thymeleaf-->
+<head>
+<meta charset="UTF-8">
+<title>机构列表</title>
+<script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+</head>
+<body>
+	<table>
+		<tr th:each="org : ${orgList}">
+			<td><img th:src="@{/img/icon1.png}"></td>
+			<td th:text="${org.id}" th:class="id" th:onclick="'getId(&quot;'+${org.id}+'&quot;)'">机构ID</td>
+			<td th:text="${org.OrganizationName}" onclick="getId(3333)">机构名称</td>
+		</tr>
+	</table>
+	<script>
+		$(function() {
+            $.ajax({
+                type: "post",
+                url: "http://192.168.0.28:8082/register/userRegister",
+                dataType: "JSON",
+                //RealName, SFZH, Telephone, Sex,Email,QQ,Address,City,PostalCode,Birthday,Education,WorkUnit,RegisterIP,ReGisterDate,LoginState,Occupation
+                data: JSON.stringify(
+                			{
+                				"RealName":"测试注册",
+                				"SFZH":"230107198903080822",
+                				"Telephone":"13145236985"
+                			}
+                		),
+                contentType: "application/json",
+                async: false,
+                success: function (msg) {
+                    console.log(msg)
+                }
+            });
+            
+			
+/*             $.ajax({
+                type: "get",
+                url: "http://192.168.0.28:8082/custom/getOrgPageList",
+                dataType: "JSON",
+                data: "pageNo=2&pageSize=3",
+                contentType: "application/json",
+                async: false,
+                success: function (msg) {
+                    console.log(msg)
+                }
+            }); */
+		})
+		
+		function getId(id)
+		{
+			alert(id)
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.DepartmentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Department">
+		<id column="DepartmentId" property="DepartmentId" />
+		<result column="DepartmentCode" property="DepartmentCode" />
+		<result column="DepartmentName" property="DepartmentName" />
+		<result column="DepartmentLogo" property="DepartmentLogo" />
+		<result column="DepartmentAbbreviation" property="DepartmentAbbreviation" />
+		<result column="PractisingCode" property="PractisingCode" />
+		<result column="IsFair" property="IsFair" />
+		<result column="DepartmentCreateTime" property="DepartmentCreateTime" />
+		<result column="AreaId" property="AreaId" />
+		<result column="Responsible" property="Responsible" />
+		<result column="CertificationAuthority" property="CertificationAuthority" />
+		<result column="CertificationTime" property="CertificationTime" />
+		<result column="DepartmentPhone" property="DepartmentPhone" />
+		<result column="DepartmentFax" property="DepartmentFax" />
+		<result column="DepartmentEmail" property="DepartmentEmail" />
+		<result column="DepartmentZipCode" property="DepartmentZipCode" />
+		<result column="DepartmentAddress" property="DepartmentAddress" />
+		<result column="Internet" property="Internet" />
+		<result column="X" property="X" />
+		<result column="Y" property="Y" />
+		<result column="DepartmentContext" property="DepartmentContext" />
+		<result column="State" property="State" />
+	</resultMap>
+
+	<select id="getDepartmentList" resultMap="BaseResultMap">
+		select * from department
+		where State=0
+		<if test="departType!=-1">
+			and DepartType=#{departType}
+		</if>
+		<if test="areaId!=-1">
+			and AreaId=#{areaId}
+		</if>
+		<if test="searchText!= null and searchText!= ''">
+			and DepartmentName like concat('%',#{searchText},'%')
+		</if>
+		order by DepartmentCreateTime desc
+	</select>
+
+	<select id="getRYDepartList" resultMap="BaseResultMap">
+		select DepartmentId,DepartmentName from department
+		where State=0 and DepartmentId in (select DepartmentId from rongworker)
+		<if test="areaId!= null and areaId!= ''">
+			and AreaId=#{areaId}
+		</if>
+		order by DepartmentCreateTime desc
+	</select>
+	
+	<select id="getSimpleDepartmentList" resultMap="BaseResultMap">
+		select DepartmentId,DepartmentName from department
+		where State=0
+		<if test="departType!=-1">
+			and DepartType=#{departType}
+		</if>
+		<if test="areaId!=-1">
+			and AreaId=#{areaId}
+		</if>
+		order by DepartmentCreateTime desc
+	</select>
+</mapper>

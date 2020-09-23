@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.ZzlsbMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Zzlsb">
+        <id column="zzlsbId" property="zzlsbId" />
+        <result column="anjianId" property="anjianId" />
+        <result column="tjyaccessId" property="tjyaccessId" />
+        <result column="fairworkerid" property="fairworkerid" />
+        <result column="state" property="state" />
+        <result column="reason" property="reason" />
+        <result column="realname" property="realname" />
+        <result column="bfuserId" property="bfuserId" />
+        <result column="zzsj" property="zzsj" />
+    </resultMap>
+
+</mapper>

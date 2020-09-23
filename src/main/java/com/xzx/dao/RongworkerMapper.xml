@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.RongworkerMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Rongworker">
+		<id column="RongworkerId" property="RongworkerId" />
+		<result column="RegionId" property="RegionId" />
+		<result column="DictionariesId" property="DictionariesId" />
+		<result column="DepartmentId" property="DepartmentId" />
+		<result column="FairworkerId" property="FairworkerId" />
+	</resultMap>
+
+	<select id="getRyWorkerList" resultType="com.xzx.model.Rongworker">
+		select a.*,b.WorkerName as workName,b.Phone as workPhone,b.Telephone as workTelephone from rongworker a
+		left join
+		fairworker b
+		on
+		a.FairworkerId=b.FairWorkerId
+		where 1=1
+		<if test="regionId!= null and regionId!= ''">
+			and a.RegionId=#{regionId}
+		</if>
+		<if test="typeId!= null and typeId!= ''">
+			and DictionariesId=#{typeId}
+		</if>
+		<if test="departId!= null and departId!= ''">
+			and a.DepartmentId=#{departId}
+		</if>
+	</select>
+</mapper>

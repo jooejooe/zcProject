@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.PqMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.xzx.model.Pq">
+		<id column="pqId" property="pqId" />
+		<result column=" ajId" property=" ajId" />
+		<result column="pqstart" property="pqstart" />
+		<result column="pqend" property="pqend" />
+		<result column="fairworkerId" property="fairworkerId" />
+	</resultMap>
+
+	<select id="getPqListByUser" resultType="com.xzx.viewModel.PqInfos">
+		SELECT c.WorkerName,a.pqstart,a.pqend,d.title
+		FROM pq a left join authentic b
+		on a.` ajId`=b.AuthenticId
+		left join fairworker c
+		on b.FairworkerId=c.FairWorkerId
+		left join assistance d
+		on d.assistanceId=b.assistanceId and assistancetype=1
+		where b.UserId=#{userId} or b.OtherPartyId=#{userId}
+		order by pqstart desc
+	</select>
+	
+	<select id="getAllPqListByUser" resultType="com.xzx.viewModel.PqInfos">
+		SELECT a.pqstart,a.pqend,c.title,
+		(select RealName from register
+		where UserId=b.UserId) nameA
+		,(select RealName from register
+		where UserId=b.OtherPartyId) nameB
+		FROM pq a left join authentic b
+		on a.` ajId`=b.AuthenticId
+		left join assistance c
+		on c.assistanceId=b.assistanceId and assistancetype=1
+		where b.FairworkerId=#{FairworkerId} and a.pqstart>=now() and ` ajId`!=#{ajId}
+		order by pqstart desc
+	</select>
+
+</mapper>

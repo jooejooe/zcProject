@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzx.dao.SocialrecoderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xzx.model.Socialrecoder">
+        <id column="socialrecoderId" property="socialrecoderId" />
+        <result column="socialId" property="socialId" />
+        <result column="socialIdCard" property="socialIdCard" />
+        <result column="socialPhone" property="socialPhone" />
+        <result column="socialName" property="socialName" />
+        <result column="recoderDate" property="recoderDate" />
+    </resultMap>
+
+</mapper>
